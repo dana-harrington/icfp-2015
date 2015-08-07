@@ -14,11 +14,11 @@ case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
 
     println(" " + ("_" * (width * 2 + 2)))
 
-    for (h <- 0 to height) {
+    for (h <- 0 until height) {
       val open = if (h % 2 == 0) "<" else " >"
       var line = ""
 
-      for (w <- 0 to width) {
+      for (w <- 0 until width) {
 
         val cell = Cell(w, h)
 

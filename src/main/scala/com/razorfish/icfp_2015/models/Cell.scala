@@ -54,6 +54,7 @@ case class Cell(column: Int, row: Int) {
       case r: Rotation => rotate(r, pivot)
     }
   }
+
 }
 
 object NilCell extends Cell(0, 0)
