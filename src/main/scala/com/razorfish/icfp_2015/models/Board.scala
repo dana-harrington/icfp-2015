@@ -1,16 +1,8 @@
 package com.razorfish.icfp_2015.models
 
-trait Board {
-  def tileState(p: Position): TileState
+class Board(val width: Int, val height: Int, val positions: Seq[Position]) {
 
-  def positions: Iterable[Position]
-
-
-}
-
-class BoardImpl(width: Int, height: Int, val positions: Seq[Position]) extends Board {
-
-  def tileState(p: Position): TileState =
+  def tileState(p: Cell): CellState =
     if (positions.contains(p)) FilledTile
     else EmptyTile
 
@@ -25,19 +17,18 @@ class BoardImpl(width: Int, height: Int, val positions: Seq[Position]) extends B
 
       for (w <- 0 to width) {
 
-        val position = Position(w, h)
+        val cell = Cell(w, h)
 
-        val unitState = gameUnit.tileState(position)
+        val unitState = gameUnit.tileState(cell)
         unitState match {
           case FilledTile => line += "()"
 
           case EmptyTile =>
 
-            val state = tileState(position)
+            val state = tileState(cell)
             state match {
               case FilledTile => line += "[]"
               case EmptyTile => line += "  "
-              case InvalidTile => throw new Exception()
             }
 
           case InvalidTile => throw new Exception()

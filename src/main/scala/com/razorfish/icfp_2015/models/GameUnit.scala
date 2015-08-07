@@ -1,26 +1,21 @@
 package com.razorfish.icfp_2015.models
 
-trait GameUnit {
-  def tileState(p: Position): TileState
+case class GameUnit(val members: Set[Cell], pivot: Cell) {
 
-  def positions: Iterable[Position]
-
-  def move(gameMove: GameMove): GameUnit
-}
-
-class GameUnitImpl(val positions: Seq[Position], pivot: Position) extends GameUnit {
-  def tileState(p: Position): TileState =
-    if (positions.contains(p)) FilledTile
+  def tileState(p: Cell): TileState =
+    if (members.contains(p)) FilledTile
     else EmptyTile
 
-  override def move(gameUnit: GameMove): GameUnit = ???
+  def positions: Iterable[Cell] = ???
+
+  def move(gameMove: GameMove): GameUnit = ???
 }
 
-object NilGameUnit extends GameUnit {
-  def tileState(p: Position): TileState = EmptyTile
+object NilGameUnit extends GameUnit(Set.empty, NilCell) {
 
-  val positions = Nil
+  override def tileState(p: Cell): TileState = EmptyTile
 
+  override val positions: Iterable[Cell] = Nil
 
   override def move(gameMove: GameMove) = NilGameUnit
 }

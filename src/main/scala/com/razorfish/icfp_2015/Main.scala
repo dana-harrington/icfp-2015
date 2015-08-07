@@ -7,12 +7,8 @@ object Main {
     println("Nothing so far")
 
 
-    val board = new BoardImpl(10, 15, Nil)
-    val testGameUnit = new GameUnitImpl(Seq(Position(1,2), Position(2,2), Position(3,2), Position(2,3)), Position(1,2))
+    val board = new Board(10, 15, Nil)
+    val testGameUnit = new GameUnit(Set(Cell(1,2), Cell(2,2), Cell(3,2), Cell(2,3)), Cell(1,2))
     board.print(testGameUnit)
   }
-}
-
-object AI {
-  def step(gc: GameConfiguration): GameMove = ???
 }
