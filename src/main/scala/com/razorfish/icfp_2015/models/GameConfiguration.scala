@@ -46,8 +46,7 @@ case class GameConfigurationImpl( board: Board,
    * @return configuration with current unit frozen, new unit activated if available
    */
   def freeze: GameConfiguration = {
-    val newBoard = board.freeze(activeUnit)
-    val linesCleared = 0 // TODO: detect lines cleared
+    val (linesCleared, newBoard) = board.freeze(activeUnit).filledRows
     val points = activeUnit.members.size + 100 * (1 + linesCleared) * linesCleared / 2
     val lineBonus =
       if (linesClearedWithPreviousUnit > 0) {
