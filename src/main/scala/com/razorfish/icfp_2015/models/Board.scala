@@ -2,9 +2,10 @@ package com.razorfish.icfp_2015.models
 
 case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
 
-  def tileState(p: Cell): CellState =
+  def tileState(p: Cell): TileState =
     if (filledCells.contains(p)) FilledTile
-    else EmptyTile
+    else if (p.row >= 0 && p.row < height && p.column >= 0 && p.column < width) EmptyTile
+    else InvalidTile
 
   def freeze(unit: GameUnit): Board = {
     this.copy(filledCells = filledCells ++ unit.positions)
@@ -32,6 +33,7 @@ case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
             state match {
               case FilledTile => line += "[]"
               case EmptyTile => line += "  "
+              case InvalidTile => throw new Exception("What the hell!? Tried to print a cell outside of the board")
             }
 
           case InvalidTile => throw new Exception()
