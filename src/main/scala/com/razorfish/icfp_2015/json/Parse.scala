@@ -21,7 +21,7 @@ object Unit {
 
 case class Input(
                   /* A unique number identifying the problem */
-                  id: Long,
+                  id: Int,
                   /* The various unit configurations that may appear in this game.
      There might be multiple entries for the same unit.
      When a unit is spawned, it will start off in the orientation
@@ -46,20 +46,24 @@ object Input {
 
 case class Parse(file: File) {
 
-  private[json] lazy val input: Input = {
+  private[json] val input: Input = {
     val contents = scala.io.Source.fromFile(file).getLines().mkString("")
     val json = Json.parse(contents)
     json.as[Input]
   }
 
-  def board: Board = {
+  val problemId = input.id
+
+  val sourceSeeds = input.sourceSeeds
+
+  val board: Board = {
 
     val filledCells = input.filled.map(_.toCell).toSet
 
     new Board(input.width, input.height, filledCells)
   }
 
-  def gameUnits: Set[GameUnit] = {
+  val gameUnits: Set[GameUnit] = {
     input.units.map {
       case Unit(members: Seq[Cell], pivot: Cell) => {
         GameUnit(members.map(_.toCell).toSet, pivot.toCell)
