@@ -6,7 +6,7 @@ trait AI {
   def step(gc: GameConfigurationImpl): GameMove
 }
 
-object ReallyStupid extends AI {
+object ReallyStupidAI extends AI {
   def step(gc: GameConfigurationImpl): GameMove = {
     SW
   }

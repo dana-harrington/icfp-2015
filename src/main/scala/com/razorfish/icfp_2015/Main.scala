@@ -8,8 +8,8 @@ object Main {
     val initialBoard = parseBoard
     val source = parseSource
     val initialConfiguration = GameConfiguration(initialBoard, source)
-    val ai: AI = ???
-    val moveEncoder: MoveEncoder = ???
+    val ai: AI = ReallyStupidAI
+    val moveEncoder: MoveEncoder = DumbEncoder
     val moves: Stream[(GameMove, GameConfiguration)] = unfold(initialConfiguration){
       case gc@GameConfigurationImpl(_, _, _, _, _) =>
         val move = ai.step(gc)
