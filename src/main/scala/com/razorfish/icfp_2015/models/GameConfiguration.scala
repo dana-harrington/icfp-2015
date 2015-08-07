@@ -52,3 +52,9 @@ case class GameConfigurationImpl( board: Board,
 
 
 }
+
+object GameConfiguration {
+  def apply(board: Board, source: Source): GameConfiguration = {
+    GameConfigurationImpl(board, source.next(), source, 0, 0)
+  }
+}

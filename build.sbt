@@ -8,7 +8,8 @@ scalaVersion := "2.11.7"
 //libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "3.6.4" % "test",
-  "com.typesafe.play" %% "play-json" % "2.3.10"
+  "com.typesafe.play" %% "play-json" % "2.3.10",
+  "org.scalaz" %% "scalaz-core" % "7.1.3"
 )
 
 // Uncomment to use Akka

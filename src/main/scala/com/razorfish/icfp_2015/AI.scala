@@ -1,7 +1,13 @@
 package com.razorfish.icfp_2015
 
-import com.razorfish.icfp_2015.models.{Source, GameMove, GameConfiguration}
+import com.razorfish.icfp_2015.models.{SW, Source, GameMove, GameConfigurationImpl}
 
 trait AI {
-  def step(gc: GameConfiguration, source: Source): GameMove = ???
+  def step(gc: GameConfigurationImpl): GameMove
+}
+
+object ReallyStupid extends AI {
+  def step(gc: GameConfigurationImpl): GameMove = {
+    SW
+  }
 }
