@@ -25,7 +25,7 @@ case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
 
         val unitState = gameUnit.tileState(cell)
         unitState match {
-          case FilledTile => line += "()"
+          case FilledTile => line += "◀▶"
 
           case EmptyTile =>
 

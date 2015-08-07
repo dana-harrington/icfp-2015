@@ -36,9 +36,13 @@ case class GameConfigurationImpl( board: Board,
       }
     val moveScore = points + lineBonus
     if (source.hasNext) {
+
+      val activeUnit = source.next()
+      //TODO: reposition to center of board
+
       GameConfigurationImpl(
         board = newBoard,
-        activeUnit = source.next(),
+        activeUnit,
         source,
         score,
         linesCleared

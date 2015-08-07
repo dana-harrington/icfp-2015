@@ -3,9 +3,11 @@ package com.razorfish.icfp_2015.json
 import java.io.File
 import play.api.libs.json._
 
-import com.razorfish.icfp_2015.models.Board
+import com.razorfish.icfp_2015.models.{GameUnit, Board}
 
-case class Cell(x: Int, y: Int)
+case class Cell(x: Int, y: Int){
+  val toCell = com.razorfish.icfp_2015.models.Cell(x, y)
+}
 
 object Cell {
   implicit val format = Json.format[Cell]
@@ -40,28 +42,28 @@ case class Input(
 
 object Input {
   implicit val format = Json.format[Input]
-
 }
 
-object Parse {
+case class Parse(file: File) {
 
-  def fromFile(file: File): Input = {
+  private[json] lazy val input: Input = {
     val contents = scala.io.Source.fromFile(file).getLines().mkString("")
     val json = Json.parse(contents)
-
-    val input = json.as[Input]
-    input
-
+    json.as[Input]
   }
 
-  def createBoard(file: File): Board = {
-    val input = fromFile(file)
+  def board: Board = {
 
-
-    val filledCells = input.filled.map {
-      case Cell(x, y) => com.razorfish.icfp_2015.models.Cell(x, y)
-    }.toSet
+    val filledCells = input.filled.map(_.toCell).toSet
 
     new Board(input.width, input.height, filledCells)
+  }
+
+  def gameUnits: Set[GameUnit] = {
+    input.units.map {
+      case Unit(members: Seq[Cell], pivot: Cell) => {
+        GameUnit(members.map(_.toCell).toSet, pivot.toCell)
+      }
+    }.toSet
   }
 }
