@@ -7,7 +7,7 @@ trait GameConfiguration {
   def update(move: GameMove): GameConfiguration
 }
 
-class GameConfigurationImpl( board: Board,
+case class GameConfigurationImpl( board: Board,
                              activeUnit: GameUnit,
                              source: Iterable[GameUnit]) extends GameConfiguration {
 
