@@ -1,5 +1,3 @@
 package com.razorfish.icfp_2015.models
 
-class GameUnit {
-
-}
+case class GameUnit(members: Set[Cell], pivot: Cell)

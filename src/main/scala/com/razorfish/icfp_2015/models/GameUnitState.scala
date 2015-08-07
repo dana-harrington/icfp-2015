@@ -2,14 +2,13 @@ package com.razorfish.icfp_2015.models
 
 trait GameUnitState {
   def unit: GameUnit
-  def position: Position
-  def orientation: Orientation
+  def members: Set[Cell]
 }
 
-class GameUnitStateImpl extends GameUnitState {
-  override def unit: GameUnit = ???
+// stupidly applied all the moves every time
+case class GameUnitStateImpl(unit: GameUnit, moves: Seq[GameMove]) extends GameUnitState {
 
-  override def position: Position = ???
+  val members: Set[Cell] =
+    unit.members.map(cell => moves.foldRight(cell)((m, c) => c.move(m, unit.pivot)))
 
-  override def orientation: Orientation = ???
 }
