@@ -1,21 +1,44 @@
 package com.razorfish.icfp_2015
 
+import java.io.File
+
 import play.api.libs.json.Json
 
 import com.razorfish.icfp_2015.json.{Parse, Output}
 import com.razorfish.icfp_2015.models._
-import java.io.File
-import scala.collection.mutable.Stack
+
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
+import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Main {
   def main(args: Array[String]): Unit = {
 
-    val a = new Stack[String]
+    /*
+    val initialBoard = parseBoard
+    val source = parseSource
+    val initialConfiguration = GameConfiguration(initialBoard, source)
+    val ai: AI = ???
+    val moveEncoder: MoveEncoder = ???
+    val moves: Stream[(GameMove, GameConfiguration)] = unfold(initialConfiguration){
+      case gc@GameConfigurationImpl(_, _, _, _, _) =>
+        val move = ai.step(gc)
+        val newGC = gc.update(move)
+        Some((move, newGC), newGC)
+      case gc@GameDoneConfiguration(_,_) =>
+        None
+    }
+    println("Nothing so far")
+
+    val board = new Board(10, 15, Set.empty)
+    val testGameUnit = new GameUnit(Set(Cell(1,2), Cell(2,2), Cell(3,2), Cell(2,3)), Cell(1,2))
+    board.print(testGameUnit)
+
+*/
+    val a = new mutable.Stack[String]
     a.pushAll(args.reverse)
 
     var timelimitSec = Int.MaxValue
