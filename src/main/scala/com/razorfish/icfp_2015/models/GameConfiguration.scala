@@ -7,12 +7,12 @@ trait GameConfiguration {
   def update(move: GameMove): GameConfiguration
 }
 
-class GameConfigurationImpl extends GameConfiguration {
-  override def board: Board = ???
+class GameConfigurationImpl( board: Board,
+                             activeUnit: GameUnit,
+                             source: Iterable[GameUnit]) extends GameConfiguration {
 
-  override def activeUnit: Option[GameUnit] = ???
+  def update(move: GameMove): GameConfiguration = {
+    ???
+  }
 
-  override def update(move: GameMove): GameConfiguration = ???
-
-  override def source: Iterable[GameUnit] = ???
 }

@@ -1,11 +1,14 @@
 package com.razorfish.icfp_2015.models
 
-class Board(val width: Int, val height: Int, val positions: Seq[Position]) {
+case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
 
   def tileState(p: Cell): CellState =
-    if (positions.contains(p)) FilledTile
+    if (filledCells.contains(p)) FilledTile
     else EmptyTile
 
+  def freeze(unit: GameUnit): Board = {
+    this.copy(filledCells = filledCells ++ unit.positions)
+  }
 
   def print(gameUnit: GameUnit = NilGameUnit) = {
 
