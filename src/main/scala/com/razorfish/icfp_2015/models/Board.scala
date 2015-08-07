@@ -60,7 +60,7 @@ case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
     var board = this
     var rowsFilled = 0
     for (row <- (height-1) to 0 by -1) {
-      val rowState = for (col <- 0 to width) yield {
+      val rowState = for (col <- 0 until width) yield {
         cellState(Cell(col, row))
       }
       if (rowState.forall(_ == FilledTile)) {
@@ -72,7 +72,7 @@ case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
   }
 
   def shiftDown(toRow: Int) = {
-    copy(filledCells = filledCells.map { filledCell =>
+    copy(filledCells = filledCells.filter(_.row != toRow).map { filledCell =>
       if (filledCell.row < toRow) {
         filledCell.copy(row = filledCell.row + 1)
       } else {
