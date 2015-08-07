@@ -4,10 +4,10 @@ case class Cell(column: Int, row: Int) {
 
   def translate(m: Translation): Cell = {
     m match {
-      case W => this.copy(column = column-1)
-      case E => this.copy(column = column+1)
-      case SW => Cell(column = column-1, row = row+1)
-      case SE => Cell(column = column-1, row = row+1)
+      case W => this.copy(column = column - 1)
+      case E => this.copy(column = column + 1)
+      case SW => Cell(column = column - 1, row = row + 1)
+      case SE => Cell(column = column - 1, row = row + 1)
     }
   }
 
@@ -22,3 +22,5 @@ case class Cell(column: Int, row: Int) {
     }
   }
 }
+
+object NilCell extends Cell(0, 0)
