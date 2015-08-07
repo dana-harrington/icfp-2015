@@ -15,19 +15,40 @@ case class GameConfigurationImpl( board: Board,
                                   score: Score,
                                   linesClearedWithPreviousUnit: Int) extends GameConfiguration {
 
-  def update(move: GameMove): GameConfiguration = {
+  /**
+   *
+   * @param move
+   * @return if unit can move as requested the new state, otherwise None
+   */
+  def tryMove(move: GameMove): Option[GameUnit] = {
     val updatedActiveUnit = activeUnit.move(move)
-    if (updatedActiveUnit.positions.forall(cell => board.tileState(cell) == EmptyTile)) {
-      copy(activeUnit = updatedActiveUnit, source = source)
+    if (updatedActiveUnit.members.forall(cell => board.tileState(cell) == EmptyTile)) {
+      Some(updatedActiveUnit)
     } else {
-      freeze
+      None
     }
   }
 
+  /**
+   *
+   * @param move
+   * @return Game configuration after move is applied
+   */
+  def update(move: GameMove): GameConfiguration = {
+    tryMove(move) match {
+      case Some(updatedUnit) => this.copy(activeUnit = updatedUnit)
+      case None => freeze
+    }
+  }
+
+  /**
+   *
+   * @return configuration with current unit frozen, new unit activated if available
+   */
   def freeze: GameConfiguration = {
     val newBoard = board.freeze(activeUnit)
     val linesCleared = 0 // TODO: detect lines cleared
-    val points = activeUnit.positions.size + 100 * (1 + linesCleared) * linesCleared / 2
+    val points = activeUnit.members.size + 100 * (1 + linesCleared) * linesCleared / 2
     val lineBonus =
       if (linesClearedWithPreviousUnit > 0) {
         Math.floor((linesClearedWithPreviousUnit - 1) * points / 10)
@@ -58,6 +79,12 @@ case class GameConfigurationImpl( board: Board,
 }
 
 object GameConfiguration {
+  /**
+   *
+   * @param board
+   * @param source
+   * @return initial configuration with given board and unit source
+   */
   def apply(board: Board, source: Source): GameConfiguration = {
     GameConfigurationImpl(board, source.next(), source, 0, 0)
   }

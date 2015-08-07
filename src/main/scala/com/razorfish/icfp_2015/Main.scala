@@ -1,34 +1,24 @@
 package com.razorfish.icfp_2015
 
 import com.razorfish.icfp_2015.models._
-import scalaz.Scalaz._
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val initialBoard = parseBoard
+    val board = parseBoard
     val source = parseSource
-    val initialConfiguration = GameConfiguration(initialBoard, source)
-    val ai: AI = ReallyStupidAI
-    val moveEncoder: MoveEncoder = DumbEncoder
-    val moves: Stream[(GameMove, GameConfiguration)] = unfold(initialConfiguration){
-      case gc@GameConfigurationImpl(_, _, _, _, _) =>
-        val move = ai.step(gc)
-        val newGC = gc.update(move)
-        Some((move, newGC), newGC)
-      case gc@GameDoneConfiguration(_,_) =>
-        None
-    }
+    val phrases = parsePhrases
 
-    val encodedMoves = moveEncoder.encode(moves.map(_._1))
+    val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
+    val encodedMoves = strategy(board, source, phrases)
 
-    println(encodedMoves.moves)
+    encodedMoves.moves.foreach(print)
 
-
-    val board = new Board(10, 15, Set.empty)
-    val testGameUnit = new GameUnit(Set(Cell(1,2), Cell(2,2), Cell(3,2), Cell(2,3)), Cell(1,2))
-    board.print(testGameUnit)
   }
+  val testGameUnit = GameUnit(
+    members = Set(Cell(1,2), Cell(2,2), Cell(3,2), Cell(2,3)),
+    pivot = Cell(1,2))
 
-  def parseBoard: Board = ???
-  def parseSource: Source = ???
+  def parseBoard: Board = Board(10, 15, Set.empty)
+  def parseSource: Source = Seq(testGameUnit, testGameUnit).iterator
+  def parsePhrases: Set[String] = Set("ie!")
 }

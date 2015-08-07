@@ -15,7 +15,7 @@ case class Board(width: Int, height: Int, filledCells: Set[Cell]) {
   }
 
   def freeze(unit: GameUnit): Board = {
-    this.copy(filledCells = filledCells ++ unit.positions)
+    this.copy(filledCells = filledCells ++ unit.members)
   }
 
   def print(gameUnit: GameUnit = NilGameUnit) = {

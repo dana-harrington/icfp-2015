@@ -6,8 +6,6 @@ case class GameUnit(members: Set[Cell], pivot: Cell) {
     if (members.contains(p)) FilledTile
     else EmptyTile
 
-  def positions: Iterable[Cell] = ???
-
   def move(move: GameMove): GameUnit = {
     val newMembers = members.map(_.move(move, pivot))
     val newPivot = pivot.move(move, pivot)
@@ -18,8 +16,6 @@ case class GameUnit(members: Set[Cell], pivot: Cell) {
 object NilGameUnit extends GameUnit(Set.empty, NilCell) {
 
   override def tileState(p: Cell): TileState = EmptyTile
-
-  override val positions: Iterable[Cell] = Nil
 
   override def move(gameMove: GameMove) = NilGameUnit
 }
