@@ -1,5 +1,5 @@
 package com.razorfish.icfp_2015.models
 
-class Position {
+case class Position(x: Int, y: Int) {
 
 }
