@@ -49,6 +49,6 @@ case class GameConfigurationImpl( board: Board,
   }
 
   // TODO: detect and remove full rows
-  // TODO: calculate / update score
+
 
 }
