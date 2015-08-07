@@ -1,6 +1,6 @@
 package com.razorfish.icfp_2015
 
-import com.razorfish.icfp_2015.models.{GameMove, GameConfiguration}
+import com.razorfish.icfp_2015.models.{Source, GameMove, GameConfiguration}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -8,6 +8,12 @@ object Main {
   }
 }
 
-object AI {
-  def step(gc: GameConfiguration): GameMove = ???
+trait AI {
+  def step(gc: GameConfiguration, source: Source): GameMove = ???
+}
+
+case class EncodedMoves(moves: Seq[Char], powerWordScore: Score)
+
+trait MoveEncoder {
+  def encode(moves: Seq[GameMove]): EncodedMoves
 }
