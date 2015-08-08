@@ -20,12 +20,12 @@ object CurserStrategy extends Strategy {
    * @param phrases
    * @return map of power phrases to their sequence of moves
    */
-  def phraseMoves(phrases: Set[String]): Map[String, Seq[GameMove]] = {
+  def phraseMoves(phrases: Seq[Vector[Char]]): Map[Vector[Char], Seq[GameMove]] = {
     phrases.map { phrase =>
       phrase -> phrase.map(decodeMove)
     }.toMap
   }
 
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = ???
+  def apply(board: Board, source: Source, phrases: Seq[Vector[Char]]): EncodedMoves = ???
 
 }

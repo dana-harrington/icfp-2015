@@ -43,7 +43,7 @@ object Main {
 
       val gameExecutions = config.inputFiles.map {
         //new GameExecution(_, timelimitSec, memoryLimitMB, phrasesOfPower.toSet)
-        new GameExecution(_, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
+        new GameExecution(_, config.timeLimit, config.memoryLimit, config.powerPhrases.toSeq.map(_.toVector))
       }
 
       //println(gameExecutions.map(_.toString).mkString(",\n"))
@@ -71,7 +71,7 @@ object Main {
 case class GameExecution(file: File,
                          timelimitSec: Option[Int],
                          memoryLimitMB: Option[Int],
-                         phrasesOfPower: Set[String]) {
+                         phrasesOfPower: Seq[Vector[Char]]) {
 
   val parse = Parse(file)
 
@@ -84,5 +84,4 @@ case class GameExecution(file: File,
       Output(parse.problemId, seed, None, gameplay.moves.mkString)
     }
   }
-
 }
