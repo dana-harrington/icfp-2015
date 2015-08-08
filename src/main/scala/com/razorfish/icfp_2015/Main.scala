@@ -13,71 +13,63 @@ import scala.util.{Failure, Success}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
+case class Config( inputFiles: Seq[File] = Seq.empty,
+                   powerPhrases: Seq[String] = Seq.empty,
+                   memoryLimit: Option[Int] = None,
+                   timeLimit: Option[Int] = None)
+
 object Main {
+
+  val argsParser = new scopt.OptionParser[Config]("ifcp_2015") {
+    opt[File]('f', "file") required() unbounded() valueName("<file>") action { (x, c) =>
+      c.copy(inputFiles = c.inputFiles :+ x) } text("-f is a required file property")
+
+    opt[Int]('t', "time") optional() valueName("<time_limit>") action { (x, c) =>
+      c.copy(timeLimit = Some(x)) } text("-t sets a time limit")
+
+    opt[Int]('m', "memory") optional() valueName("<memory limit>") action { (x, c) =>
+      c.copy(memoryLimit = Some(x)) } text("-m sets a memory limit")
+
+    opt[String]('p', "phrase") unbounded() valueName("<power phrase>") action { (x, c) =>
+      c.copy(powerPhrases = c.powerPhrases :+ x) } text("-p power phrase")
+  }
+
   def main(args: Array[String]): Unit = {
 
-    val a = new mutable.Stack[String]
-    a.pushAll(args.reverse)
+    argsParser.parse(args, Config()).foreach { config =>
+      // TODO: handle memory limit
+      // TODO: handle time limit (dump out any problems that are completed near end of limit)
 
-    var timelimitSec = Int.MaxValue
-    var memoryLimitMB = Int.MaxValue
-    val phrasesOfPower = new scala.collection.mutable.HashSet[String]
-    val files = new ListBuffer[File]
-
-    while (!a.isEmpty) {
-      val h = a.pop()
-
-      if (h.startsWith("-f")) {
-        files += new File(
-            if (h == "-f") a.pop()
-            else h.drop(2)
-        )
-      } else if (h.startsWith("-t")) {
-        timelimitSec = {
-          if (h == "-t") a.pop()
-          else h.drop(2)
-        }.toInt
-      } else if (h.startsWith("-m")) {
-        memoryLimitMB = {
-          if (h == "-m") a.pop()
-          else h.drop(2)
-        }.toInt
-      } else if (h.startsWith("-p")) {
-        phrasesOfPower += {
-          if (h == "-p") a.pop()
-          else h.drop(2)
-        }
-      } else throw new Exception("Unknown parameter " + h)
-    }
-
-    if (files.isEmpty) throw new Exception("No files specified")
-
-    val gameExecutions = files.map {
-      new GameExecution(_, timelimitSec, memoryLimitMB, phrasesOfPower.toSet)
-    }
-
-    //println(gameExecutions.map(_.toString).mkString(",\n"))
-
-    val futures = Future.sequence(gameExecutions.map { game =>
-      Future {
-        game.run
+      val gameExecutions = config.inputFiles.map {
+        //new GameExecution(_, timelimitSec, memoryLimitMB, phrasesOfPower.toSet)
+        new GameExecution(_, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
       }
-    })
 
-    val results = Await.ready(futures, timelimitSec seconds).value.get
+      //println(gameExecutions.map(_.toString).mkString(",\n"))
 
-    val returnValue = (results match {
-      case Success(t) => t.flatten.toSeq
-      case Failure(e) => throw e
-    }).map(Json.toJson(_)(Output.format))
+      val futures = Future.sequence(gameExecutions.map { game =>
+        Future {
+          game.run
+        }
+      })
 
-    println(Json.asciiStringify(Json.toJson(returnValue)))
+
+      val results = Await.ready(futures, config.timeLimit.getOrElse(Int.MaxValue).seconds).value.get
+
+      val returnValue = (results match {
+        case Success(t) => t.flatten.toSeq
+        case Failure(e) => throw e
+      }).map(Json.toJson(_)(Output.format))
+
+      println(Json.asciiStringify(Json.toJson(returnValue)))
+    }
   }
+   
 }
 
 case class GameExecution(file: File,
-                         timelimitSec: Int,
-                         memoryLimitMB: Int,
+                         timelimitSec: Option[Int],
+                         memoryLimitMB: Option[Int],
                          phrasesOfPower: Set[String]) {
 
   val parse = Parse(file)
