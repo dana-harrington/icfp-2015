@@ -1,0 +1,3 @@
+#!/bin/sh
+# // TODO: fix shell quoting issue for quoted power phrases
+activator "runMain com.razorfish.icfp_2015.Main $*"

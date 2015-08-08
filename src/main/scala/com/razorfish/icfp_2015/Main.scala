@@ -3,7 +3,7 @@ package com.razorfish.icfp_2015
 import java.io.File
 
 import com.razorfish.icfp_2015.models.UnitSource
-import play.api.libs.json.Json
+import play.api.libs.json._
 
 import com.razorfish.icfp_2015.json.{Parse, Output}
 import scala.collection.mutable
@@ -29,10 +29,8 @@ object Main {
 
       if (h.startsWith("-f")) {
         files += new File(
-          "src/test/resources/problems/" + (
             if (h == "-f") a.pop()
             else h.drop(2)
-            )
         )
       } else if (h.startsWith("-t")) {
         timelimitSec = {
@@ -68,12 +66,12 @@ object Main {
 
     val results = Await.ready(futures, timelimitSec seconds).value.get
 
-    val returnValue = results match {
-      case Success(t) => Json.arr(t.flatten.seq)
+    val returnValue = (results match {
+      case Success(t) => t.flatten.toSeq
       case Failure(e) => throw e
-    }
+    }).map(Json.toJson(_)(Output.format))
 
-    println(Json.asciiStringify(returnValue))
+    println(Json.asciiStringify(Json.toJson(returnValue)))
   }
 }
 
@@ -85,14 +83,12 @@ case class GameExecution(file: File,
   val parse = Parse(file)
 
   def run: Seq[Output] = {
-    //TODO: run simulation
-    println("Running game")
 
     parse.sourceSeeds.map { seed =>
       val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
       val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
       val gameplay = strategy(parse.board, source, phrasesOfPower)
-      Output(parse.problemId, seed, "TODO TAG HERE", gameplay.moves.toString)
+      Output(parse.problemId, seed, "TODO TAG HERE", gameplay.moves.mkString)
     }
   }
 
