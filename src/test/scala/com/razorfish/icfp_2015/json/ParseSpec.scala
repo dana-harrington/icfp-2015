@@ -42,7 +42,7 @@ class ParseSpec extends org.specs2.mutable.Specification {
     */
   }
 
-  val problems = (0 to 23).map(i => new File(s"src/test/resources/problems/problem_$i.json"))
+  val problems = (0 to 24).map(i => new File(s"src/test/resources/problems/problem_$i.json"))
 
   "all problems" in {
 
