@@ -7,9 +7,9 @@ sealed trait GameConfiguration {
   def score: Score
 }
 
-case class GameDoneConfiguration(board: Board, score: Score) extends GameConfiguration
+case class CompletedGameConfiguration(board: Board, score: Score) extends GameConfiguration
 
-case class GameConfigurationImpl( board: Board,
+case class ActiveGameConfiguration( board: Board,
                                   activeUnit: GameUnit,
                                   source: Iterator[GameUnit],
                                   score: Score,
@@ -60,7 +60,7 @@ case class GameConfigurationImpl( board: Board,
       val activeUnit = source.next()
       //TODO: reposition to center of board
 
-      GameConfigurationImpl(
+      ActiveGameConfiguration(
         board = newBoard,
         activeUnit,
         source,
@@ -68,7 +68,7 @@ case class GameConfigurationImpl( board: Board,
         linesCleared
       )
     } else {
-      GameDoneConfiguration(board.freeze(activeUnit), score + moveScore)
+      CompletedGameConfiguration(board.freeze(activeUnit), score + moveScore)
     }
   }
 
@@ -82,6 +82,6 @@ object GameConfiguration {
    * @return initial configuration with given board and unit source
    */
   def apply(board: Board, source: Source): GameConfiguration = {
-    GameConfigurationImpl(board, source.next(), source, 0, 0)
+    ActiveGameConfiguration(board, source.next(), source, 0, 0)
   }
 }

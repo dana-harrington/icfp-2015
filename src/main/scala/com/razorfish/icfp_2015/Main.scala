@@ -7,15 +7,13 @@ import com.razorfish.icfp_2015.strategies.{PhraseAfterthoughtStrategy, ReallyStu
 import play.api.libs.json._
 
 import com.razorfish.icfp_2015.json.{Parse, Output}
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 case class Config( inputFiles: Seq[File] = Seq.empty,
-                   powerPhrases: Seq[String] = Seq.empty,
+                   powerPhrases: Set[String] = Set.empty,
                    memoryLimit: Option[Int] = None,
                    timeLimit: Option[Int] = None)
 
@@ -32,7 +30,7 @@ object Main {
       c.copy(memoryLimit = Some(x)) } text "-m sets a memory limit in MB"
 
     opt[String]('p', "phrase") unbounded() valueName "<power phrase>" action { (x, c) =>
-      c.copy(powerPhrases = c.powerPhrases :+ x) } text "-p power phrase"
+      c.copy(powerPhrases = c.powerPhrases + x) } text "-p power phrase"
   }
 
   def main(args: Array[String]): Unit = {
@@ -43,7 +41,7 @@ object Main {
 
       val gameExecutions = config.inputFiles.map {
         //new GameExecution(_, timelimitSec, memoryLimitMB, phrasesOfPower.toSet)
-        new GameExecution(_, config.timeLimit, config.memoryLimit, config.powerPhrases.toSeq.map(_.toVector))
+        new GameExecution(_, config.timeLimit, config.memoryLimit, config.powerPhrases)
       }
 
       //println(gameExecutions.map(_.toString).mkString(",\n"))
@@ -58,7 +56,7 @@ object Main {
       val results = Await.ready(futures, config.timeLimit.getOrElse(Int.MaxValue).seconds).value.get
 
       val returnValue = (results match {
-        case Success(t) => t.flatten.toSeq
+        case Success(t) => t.flatten
         case Failure(e) => throw e
       }).map(Json.toJson(_)(Output.format))
 
@@ -71,7 +69,7 @@ object Main {
 case class GameExecution(file: File,
                          timelimitSec: Option[Int],
                          memoryLimitMB: Option[Int],
-                         phrasesOfPower: Seq[Vector[Char]]) {
+                         phrasesOfPower: Set[String]) {
 
   val parse = Parse(file)
 

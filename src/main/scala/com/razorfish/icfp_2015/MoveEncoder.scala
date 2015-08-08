@@ -104,4 +104,11 @@ object MoveEncoder {
     CCW ->
       Set('k','s','t','u','w','x')
   )
+
+  val decodeMove: Map[Char, GameMove] = {
+    MoveEncoder.moveEncodings.flatMap {
+      case (move, encodings) =>
+        encodings.map(_ -> move)
+    }
+  }
 }

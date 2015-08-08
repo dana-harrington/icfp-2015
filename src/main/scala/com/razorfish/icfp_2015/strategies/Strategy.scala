@@ -6,7 +6,32 @@ import com.razorfish.icfp_2015.models._
 import scalaz.Scalaz._
 
 trait Strategy {
-  def apply(board: Board, source: Source, phrases: Seq[Vector[Char]]): EncodedMoves
+  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves
+}
+
+/**
+ * A strategy that keeps a state and calculates a move at a time
+ * @tparam State
+ */
+trait SteppedStrategy[State] extends Strategy {
+  def initialState: State
+
+  def moveEncoder: MoveEncoder
+
+  def step(gc: ActiveGameConfiguration, state: State): (GameMove, State)
+
+  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
+    val initialConfiguration = GameConfiguration(board, source)
+    val moves = unfold((initialState, initialConfiguration)) {
+      case (state, gc@ActiveGameConfiguration(_, _, _, _, _)) =>
+        val (move, newState) = step(gc, state)
+        val newGC = gc.update(move)
+        Option((move, newGC), (newState, newGC))
+      case (_, gc@CompletedGameConfiguration(_, _)) =>
+        None
+    }.map(_._1)
+    moveEncoder.encode(moves, phrases.toSeq.map(_.toVector))
+  }
 }
 
 /**
@@ -14,17 +39,10 @@ trait Strategy {
  * @param ai
  * @param moveEncoder
  */
-case class PhraseAfterthoughtStrategy(ai: MoveAI, moveEncoder: MoveEncoder) extends Strategy {
-  def apply(board: Board, source: Source, phrases: Seq[Vector[Char]]): EncodedMoves = {
-    val initialConfiguration = GameConfiguration(board, source)
-    val moves: Stream[(GameMove, GameConfiguration)] = unfold(initialConfiguration){
-      case gc@GameConfigurationImpl(_, _, _, _, _) =>
-        val move = ai.step(gc)
-        val newGC = gc.update(move)
-        Some((move, newGC), newGC)
-      case gc@GameDoneConfiguration(_,_) =>
-        None
-    }
-    moveEncoder.encode(moves.map(_._1), phrases)
+case class PhraseAfterthoughtStrategy(ai: MoveAI, moveEncoder: MoveEncoder) extends SteppedStrategy[Unit] {
+  def initialState = ()
+  def step(gc: ActiveGameConfiguration, state: Unit) = {
+    (ai.step(gc), ())
   }
 }
+
