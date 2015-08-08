@@ -17,3 +17,7 @@ libraryDependencies ++= Seq(
 //libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.3.11"
 
 retrieveManaged := true
+
+name := "play_icfp2015"
+
+enablePlugins(JavaAppPackaging)

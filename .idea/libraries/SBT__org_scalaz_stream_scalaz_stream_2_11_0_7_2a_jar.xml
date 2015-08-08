@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: org.scalaz.stream:scalaz-stream_2.11:0.7.2a:jar">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib_managed/bundles/org.scalaz.stream/scalaz-stream_2.11/scalaz-stream_2.11-0.7.2a.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SBT: org.specs2:specs2-matcher_2.11:3.6.4:jar">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib_managed/jars/org.specs2/specs2-matcher_2.11/specs2-matcher_2.11-3.6.4.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

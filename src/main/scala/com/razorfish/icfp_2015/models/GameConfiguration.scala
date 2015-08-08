@@ -50,7 +50,7 @@ case class GameConfigurationImpl( board: Board,
     val points = activeUnit.members.size + 100 * (1 + linesCleared) * linesCleared / 2
     val lineBonus =
       if (linesClearedWithPreviousUnit > 0) {
-        Math.floor((linesClearedWithPreviousUnit - 1) * points / 10)
+        Math.floor((linesClearedWithPreviousUnit - 1) * points / 10).toInt
       } else {
         0
       }
@@ -64,16 +64,13 @@ case class GameConfigurationImpl( board: Board,
         board = newBoard,
         activeUnit,
         source,
-        score,
+        score + moveScore,
         linesCleared
       )
     } else {
-      GameDoneConfiguration(board.freeze(activeUnit), score)
+      GameDoneConfiguration(board.freeze(activeUnit), score + moveScore)
     }
   }
-
-  // TODO: detect and remove full rows
-
 
 }
 
