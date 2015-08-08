@@ -2,22 +2,10 @@ package com.razorfish.icfp_2015.json
 
 import java.io.File
 import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+import com.razorfish.icfp_2015.models.{Cell, GameUnit, Board}
 
-import com.razorfish.icfp_2015.models.{GameUnit, Board}
-
-case class Cell(x: Int, y: Int){
-  val toCell = com.razorfish.icfp_2015.models.Cell(x, y)
-}
-
-object Cell {
-  implicit val format = Json.format[Cell]
-}
-
-case class Unit(members: Seq[Cell], pivot: Cell)
-
-object Unit {
-  implicit val format = Json.format[Unit]
-}
 
 case class Input(
                   /* A unique number identifying the problem */
@@ -26,13 +14,13 @@ case class Input(
      There might be multiple entries for the same unit.
      When a unit is spawned, it will start off in the orientation
      specified in this field. */
-                  units: Seq[Unit],
+                  units: Seq[GameUnit],
                   /* The number of cells in a row */
                   width: Int,
                   /* The number of rows on the board */
                   height: Int,
                   /* Which cells start filled */
-                  filled: Seq[Cell],
+                  filled: Set[Cell],
                   /* How many units in the source */
                   sourceLength: Int,
                   /* How to generate the source and
@@ -41,7 +29,14 @@ case class Input(
                   )
 
 object Input {
-  implicit val format = Json.format[Input]
+  // Our Cell has properties 'row' and 'column' to avoid collision with x,y,z of cubic coordinates
+  private implicit val readsCell: Reads[Cell] = {
+    ((__ \ "x").read[Int] and
+      (__ \ "y").read[Int]
+      )(Cell.apply _)
+  }
+  private implicit val readsGameUnit = Json.reads[GameUnit]
+  implicit val reads = Json.reads[Input]
 }
 
 case class Parse(file: File) {
@@ -58,18 +53,9 @@ case class Parse(file: File) {
 
   val sourceLength = input.sourceLength
 
-  val board: Board = {
-
-    val filledCells = input.filled.map(_.toCell).toSet
-
-    new Board(input.width, input.height, filledCells)
-  }
+  val board: Board = Board(input.width, input.height, input.filled)
 
   val gameUnits: IndexedSeq[GameUnit] = {
-    input.units.map {
-      case Unit(members: Seq[Cell], pivot: Cell) => {
-        GameUnit(members.map(_.toCell).toSet, pivot.toCell)
-      }
-    }.toArray[GameUnit]
+    input.units.toArray[GameUnit]
   }
 }
