@@ -60,6 +60,7 @@ class ParseSpec extends org.specs2.mutable.Specification {
     }
 
     "print gameunits" in {
+      skipped
       problems.forall {
         case file =>
           val parse = Parse(file)
