@@ -2,6 +2,7 @@ package com.razorfish.icfp_2015
 
 import java.io.File
 
+import com.razorfish.icfp_2015.models.UnitSource
 import play.api.libs.json.Json
 
 import com.razorfish.icfp_2015.json.{Parse, Output}
@@ -88,7 +89,7 @@ case class GameExecution(file: File,
     println("Running game")
 
     parse.sourceSeeds.map { seed =>
-      val source = parse.gameUnits.iterator // FIXME
+      val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
       val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
       val gameplay = strategy(parse.board, source, phrasesOfPower)
       Output(parse.problemId, seed, "TODO TAG HERE", gameplay.moves.toString)

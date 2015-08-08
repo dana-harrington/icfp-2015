@@ -56,6 +56,8 @@ case class Parse(file: File) {
 
   val sourceSeeds = input.sourceSeeds
 
+  val sourceLength = input.sourceLength
+
   val board: Board = {
 
     val filledCells = input.filled.map(_.toCell).toSet
@@ -63,11 +65,11 @@ case class Parse(file: File) {
     new Board(input.width, input.height, filledCells)
   }
 
-  val gameUnits: Set[GameUnit] = {
+  val gameUnits: IndexedSeq[GameUnit] = {
     input.units.map {
       case Unit(members: Seq[Cell], pivot: Cell) => {
         GameUnit(members.map(_.toCell).toSet, pivot.toCell)
       }
-    }.toSet
+    }.toArray[GameUnit]
   }
 }
