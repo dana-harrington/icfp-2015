@@ -1,16 +1,82 @@
 package com.razorfish.icfp_2015
 
-import com.razorfish.icfp_2015.models.{W, SW, SE, E, CW, CCW, GameMove}
+import com.razorfish.icfp_2015.models._
 
+import MoveEncoder._
 
 case class EncodedMoves(moves: Seq[Char], powerWordScore: Score)
 
+sealed trait MatchState
+
+case class NodeState(count: Int, powerWords: Seq[PowerWord]) extends MatchState {
+  def noMatch: Boolean = powerWords.isEmpty
+}
+
 trait MoveEncoder {
-  def encode(moves: Seq[GameMove]): EncodedMoves
+
+  lazy val commandCode: Map[GameMove, Vector[Char]] = Map(
+    W -> "p'!.03".toVector,
+    E -> "bcefy2".toVector,
+    SW -> "aghij4".toVector,
+    SE -> "lmno 5".toVector,
+    CW -> "dqrvz1".toVector,
+    CCW -> "kstuwx".toVector
+  )
+
+  def getMoveCodeHead(move: GameMove): Char =
+    getMoveCodeSet(move).head
+
+  def getMoveCodeSet(move: GameMove): Vector[Char] =
+    commandCode(move)
+
+  def simpleEncode(moves: Seq[GameMove]): EncodedMoves = {
+    val simpleCode = moves.map(commandCode(_).head)
+    EncodedMoves(simpleCode, 0L)
+  }
+
+  def encode(moves: Seq[GameMove], powerWords: Seq[PowerWord]): EncodedMoves = {
+
+    val result = moves.foldLeft(("", NodeState(0,powerWords))) { (acc, move) =>
+
+      val head = getMoveCodeHead(move)
+
+      val moveVector = getMoveCodeSet(move)
+
+      val encoded = acc._1 + head
+
+      val matches = partialMatches(moveVector, acc._2.count, acc._2.powerWords)
+
+      val rematched = if (matches.nonEmpty) matches
+                      else partialMatches(moveVector, 0, acc._2.powerWords)
+
+      val nextMatchState = NodeState(
+        count = if (rematched.nonEmpty) acc._2.count + 1 else 0,
+        powerWords = if (rematched.nonEmpty) rematched else powerWords
+      )
+
+      val nextRound = (encoded, nextMatchState)
+
+      choosePowerWord(nextMatchState).fold(nextRound){ powerWord =>
+        (encoded.dropRight(powerWord.length) + powerWord.foldRight("")(_+_), NodeState(0,powerWords))
+      }
+    }
+    EncodedMoves(result._1, 0L)
+  }
+
+  def partialMatches(moveSet: Vector[Char], position: Int, powerWords: Seq[PowerWord]): Seq[PowerWord] =
+    powerWords.filter(_.length > position).filter { word =>
+      moveSet contains word(position).toLower
+    }
+
+  def choosePowerWord(state: NodeState): Option[PowerWord] = {
+    state.powerWords.find { word =>
+      state.count == word.length
+    }
+  }
 }
 
 object DumbEncoder extends MoveEncoder {
-  override def encode(moves: Seq[GameMove]): EncodedMoves = {
+  def encode(moves: Seq[GameMove]): EncodedMoves = {
     val encodedMoves = moves.map{ move =>
       MoveEncoder.moveEncodings(move).head
     }
@@ -18,7 +84,8 @@ object DumbEncoder extends MoveEncoder {
   }
 }
 
-object MoveEncoder {
+object MoveEncoder extends MoveEncoder {
+  type PowerWord = Vector[Char]
   val moveEncodings: Map[GameMove, Set[Char]] = Map(
     W ->
       Set('p', '\'', '!', '.', '0', '3'),

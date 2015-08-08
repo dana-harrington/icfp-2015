@@ -1,12 +1,12 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.EncodedMoves
+import com.razorfish.icfp_2015.{MoveEncoder, EncodedMoves}
 import com.razorfish.icfp_2015.models._
 
 import scalaz.Scalaz._
 
 trait Strategy {
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves
+  def apply(board: Board, source: Source, phrases: Seq[Vector[Char]]): EncodedMoves
 }
 
 /**
@@ -15,7 +15,7 @@ trait Strategy {
  * @param moveEncoder
  */
 case class PhraseAfterthoughtStrategy(ai: MoveAI, moveEncoder: MoveEncoder) extends Strategy {
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
+  def apply(board: Board, source: Source, phrases: Seq[Vector[Char]]): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     val moves: Stream[(GameMove, GameConfiguration)] = unfold(initialConfiguration){
       case gc@GameConfigurationImpl(_, _, _, _, _) =>
@@ -25,6 +25,6 @@ case class PhraseAfterthoughtStrategy(ai: MoveAI, moveEncoder: MoveEncoder) exte
       case gc@GameDoneConfiguration(_,_) =>
         None
     }
-    moveEncoder.encode(moves.map(_._1))
+    moveEncoder.encode(moves.map(_._1), phrases)
   }
 }
