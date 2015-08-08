@@ -1,6 +1,6 @@
-package com.razorfish.icfp_2015
+package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.models.{SW, GameMove, GameConfigurationImpl}
+import com.razorfish.icfp_2015.models.{GameConfigurationImpl, GameMove, SW}
 
 trait MoveAI {
   def step(gc: GameConfigurationImpl): GameMove

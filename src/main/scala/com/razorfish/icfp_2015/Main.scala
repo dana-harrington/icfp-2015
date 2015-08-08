@@ -3,6 +3,7 @@ package com.razorfish.icfp_2015
 import java.io.File
 
 import com.razorfish.icfp_2015.models.UnitSource
+import com.razorfish.icfp_2015.strategies.{PhraseAfterthoughtStrategy, ReallyStupidAI}
 import play.api.libs.json._
 
 import com.razorfish.icfp_2015.json.{Parse, Output}

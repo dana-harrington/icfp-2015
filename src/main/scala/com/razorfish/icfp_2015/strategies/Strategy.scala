@@ -1,5 +1,6 @@
-package com.razorfish.icfp_2015
+package com.razorfish.icfp_2015.strategies
 
+import com.razorfish.icfp_2015.EncodedMoves
 import com.razorfish.icfp_2015.models._
 
 import scalaz.Scalaz._
