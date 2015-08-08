@@ -66,16 +66,22 @@ case class ActiveGameConfiguration( board: Board,
     val freezeState = freezeResult
     if (source.hasNext) {
 
-      val activeUnit = source.next()
-      //TODO: reposition to center of board
+      val newActiveUnit = source.next().center(board)
+      newActiveUnit.fold[GameConfiguration] {
 
-      ActiveGameConfiguration(
-        board = freezeState.board,
-        activeUnit,
-        source,
-        score + freezeState.score,
-        freezeState.linesCleared
-      )
+        //Can't place new unit
+        CompletedGameConfiguration(board.freeze(activeUnit), score + freezeState.score)
+
+      }{ activeUnit =>
+
+        ActiveGameConfiguration(
+          board = freezeState.board,
+          activeUnit,
+          source,
+          score + freezeState.score,
+          freezeState.linesCleared
+        )
+      }
     } else {
       CompletedGameConfiguration(board.freeze(activeUnit), score + freezeState.score)
     }
