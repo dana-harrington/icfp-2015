@@ -21,17 +21,17 @@ case class Config( inputFiles: Seq[File] = Seq.empty,
 object Main {
 
   val argsParser = new scopt.OptionParser[Config]("ifcp_2015") {
-    opt[File]('f', "file") required() unbounded() valueName("<file>") action { (x, c) =>
-      c.copy(inputFiles = c.inputFiles :+ x) } text("-f is a required file property")
+    opt[File]('f', "file") required() unbounded() valueName "<file>" action { (x, c) =>
+      c.copy(inputFiles = c.inputFiles :+ x) } text "-f is a required file property"
 
-    opt[Int]('t', "time") optional() valueName("<time_limit>") action { (x, c) =>
-      c.copy(timeLimit = Some(x)) } text("-t sets a time limit")
+    opt[Int]('t', "time") optional() valueName "<time limit in seconds>" action { (x, c) =>
+      c.copy(timeLimit = Some(x)) } text "-t sets a time limit in seconds"
 
-    opt[Int]('m', "memory") optional() valueName("<memory limit>") action { (x, c) =>
-      c.copy(memoryLimit = Some(x)) } text("-m sets a memory limit")
+    opt[Int]('m', "memory") optional() valueName "<memory limit in MB>" action { (x, c) =>
+      c.copy(memoryLimit = Some(x)) } text "-m sets a memory limit in MB"
 
-    opt[String]('p', "phrase") unbounded() valueName("<power phrase>") action { (x, c) =>
-      c.copy(powerPhrases = c.powerPhrases :+ x) } text("-p power phrase")
+    opt[String]('p', "phrase") unbounded() valueName "<power phrase>" action { (x, c) =>
+      c.copy(powerPhrases = c.powerPhrases :+ x) } text "-p power phrase"
   }
 
   def main(args: Array[String]): Unit = {
@@ -61,10 +61,10 @@ object Main {
         case Failure(e) => throw e
       }).map(Json.toJson(_)(Output.format))
 
-      println(Json.asciiStringify(Json.toJson(returnValue)))
+      println(Json.prettyPrint(Json.toJson(returnValue)))
     }
   }
-   
+
 }
 
 case class GameExecution(file: File,
@@ -80,7 +80,7 @@ case class GameExecution(file: File,
       val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
       val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
       val gameplay = strategy(parse.board, source, phrasesOfPower)
-      Output(parse.problemId, seed, "TODO TAG HERE", gameplay.moves.mkString)
+      Output(parse.problemId, seed, None, gameplay.moves.mkString)
     }
   }
 

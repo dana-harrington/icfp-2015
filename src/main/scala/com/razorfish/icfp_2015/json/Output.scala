@@ -8,7 +8,7 @@ case class Output(
                    /* The seed for the particular game */
                    seed: Long,
                    /* A tag for this solution. */
-                   tag: String,
+                   tag: Option[String],
                    solution: String
 )
 
