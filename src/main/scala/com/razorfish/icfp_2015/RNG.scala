@@ -9,12 +9,9 @@ class RNGProvider(modulus: Long, multiplier: Long, increment: Long, seed: Long) 
   def hasNext: Boolean = true
 
   def next: Int = {
+    val result = currentSeed >> 16 & 0x7fff
     currentSeed = (multiplier * currentSeed + increment) % modulus
-
-    val bits = currentSeed.toBinaryString
-    def fillZeros(b: String): String = if (b.length < 32) fillZeros("0" + b) else b
-
-    Integer.parseInt(fillZeros(bits).takeRight(31).take(15), 2)
+    result.toInt
   }
 
 }

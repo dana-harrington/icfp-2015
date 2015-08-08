@@ -13,8 +13,8 @@ class RNGProviderSpec extends Specification {
 
       val rngp = new RNGProvider(m, a, c, seed)
 
-      //TODO: Figure out the 0 case
-      //rngp.next must beEqualTo(0)
+
+      rngp.next must beEqualTo(0)
       rngp.next must beEqualTo(24107)
       rngp.next must beEqualTo(16552)
       rngp.next must beEqualTo(12125)
