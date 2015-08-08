@@ -20,7 +20,7 @@ object RunEncoder {
     )
 
 
-    val encoded = MoveEncoder.encode(moves, powerWords)
+    val encoded = InLineEncoder.encode(moves, powerWords)
     println(s"\n$encoded\n")
   }
 
