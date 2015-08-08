@@ -1,5 +1,27 @@
 package com.razorfish.icfp_2015.models
 
+// see http://www.redblobgames.com/grids/hexagons/
+private case class CubeCoord(x: Int, y: Int, z: Int) {
+  def cell: Cell = {
+    val col = x + (z - (z&1)) / 2
+    val row = z
+    Cell(col, row)
+  }
+
+  def rotate(r: Rotation) = r match {
+    case CW => CubeCoord(-z, -x, -y)
+    case CCW => CubeCoord(-y, -z, -x)
+  }
+
+  def -(cc: CubeCoord): CubeCoord = {
+    CubeCoord(x-cc.x, y-cc.y, z-cc.z)
+  }
+  
+  def +(cc: CubeCoord): CubeCoord  = {
+    CubeCoord(x+cc.x, y+cc.y, z+cc.z)
+  }
+}
+
 case class Cell(column: Int, row: Int) {
 
   def translate(m: Translation): Cell = {
@@ -11,8 +33,19 @@ case class Cell(column: Int, row: Int) {
     }
   }
 
+  private[models] def cubeCoords: CubeCoord = {
+    val x = column - (row - (row & 1)) / 2
+    val z = row
+    val y = -x - z
+    CubeCoord(x,y,z)
+  }
+
   def rotate(r: Rotation, pivot: Cell): Cell = {
-    ???
+    val pivotCC = pivot.cubeCoords
+    // cubic coordinate vector from pivot to this cell
+    val vect = this.cubeCoords - pivotCC
+    val newCubeCoords = pivotCC + vect.rotate(r)
+    newCubeCoords.cell
   }
 
   def move(move: GameMove, pivot: Cell): Cell = {
@@ -21,6 +54,7 @@ case class Cell(column: Int, row: Int) {
       case r: Rotation => rotate(r, pivot)
     }
   }
+
 }
 
 object NilCell extends Cell(0, 0)

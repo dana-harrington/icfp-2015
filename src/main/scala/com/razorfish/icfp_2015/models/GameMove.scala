@@ -10,3 +10,7 @@ case object SE extends GameMove with Translation
 case object E extends GameMove with Translation
 case object CW extends GameMove with Rotation
 case object CCW extends GameMove with Rotation
+
+object GameMove {
+  val moves = Set[GameMove](W,SW,SE,E,CW,CCW)
+}
