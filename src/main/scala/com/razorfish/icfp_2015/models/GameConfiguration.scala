@@ -43,9 +43,11 @@ case class ActiveGameConfiguration( board: Board,
 
   /**
    *
-   * @return configuration with current unit frozen, new unit activated if available
+   * @return points scored by freezing the current active unit
    */
-  def freeze: GameConfiguration = {
+  case class FreezeResult(score: Score, linesCleared: Int, board: Board)
+
+  def freezeResult: FreezeResult = {
     val (linesCleared, newBoard) = board.freeze(activeUnit).filledRows
     val points = activeUnit.members.size + 100 * (1 + linesCleared) * linesCleared / 2
     val lineBonus =
@@ -54,21 +56,28 @@ case class ActiveGameConfiguration( board: Board,
       } else {
         0
       }
-    val moveScore = points + lineBonus
+    FreezeResult(points + lineBonus, linesCleared, newBoard)
+  }
+  /**
+   * Side-effecting!! Pulls next unit from source
+   * @return configuration with current unit frozen, new unit activated if available
+   */
+  def freeze(): GameConfiguration = {
+    val freezeState = freezeResult
     if (source.hasNext) {
 
       val activeUnit = source.next()
       //TODO: reposition to center of board
 
       ActiveGameConfiguration(
-        board = newBoard,
+        board = freezeState.board,
         activeUnit,
         source,
-        score + moveScore,
-        linesCleared
+        score + freezeState.score,
+        freezeState.linesCleared
       )
     } else {
-      CompletedGameConfiguration(board.freeze(activeUnit), score + moveScore)
+      CompletedGameConfiguration(board.freeze(activeUnit), score + freezeState.score)
     }
   }
 
