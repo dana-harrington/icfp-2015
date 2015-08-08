@@ -3,7 +3,7 @@ package com.razorfish.icfp_2015.json
 import org.specs2.mutable._
 import java.io.File
 
-import com.razorfish.icfp_2015.models.{NilGameUnit, GameConfigurationImpl, Board}
+import com.razorfish.icfp_2015.models.{NilGameUnit, ActiveGameConfiguration, Board}
 
 class ParseSpec extends org.specs2.mutable.Specification {
 
@@ -70,7 +70,7 @@ class ParseSpec extends org.specs2.mutable.Specification {
           println("----------------------------------------------------")
           gameUnits.forall {
             case gameUnit =>
-              val gameConfiguration = GameConfigurationImpl(parse.board, NilGameUnit, Seq(gameUnit).toIterator, 0, 0).freeze.asInstanceOf[GameConfigurationImpl]
+              val gameConfiguration = ActiveGameConfiguration(parse.board, NilGameUnit, Seq(gameUnit).toIterator, 0, 0).freeze.asInstanceOf[ActiveGameConfiguration]
               gameConfiguration.board.print(gameConfiguration.activeUnit)
             true
           }

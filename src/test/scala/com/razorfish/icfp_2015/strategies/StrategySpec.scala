@@ -33,7 +33,7 @@ trait StrategySpec extends Specification {
     val gameMoves = solutionToGameMoves(output.solution)
     val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
 
-    var gameConfiguration = GameConfiguration(parse.board, source).asInstanceOf[GameConfigurationImpl]
+    var gameConfiguration = GameConfiguration(parse.board, source).asInstanceOf[ActiveGameConfiguration]
     var gameDone = false
 
     for (move <- gameMoves) {
@@ -42,8 +42,8 @@ trait StrategySpec extends Specification {
       gameConfiguration.board.print(gameConfiguration.activeUnit)
 
       gameConfiguration.update(move) match {
-        case _: GameDoneConfiguration => gameDone = true
-        case gc: GameConfigurationImpl => gameConfiguration = gc
+        case _: CompletedGameConfiguration => gameDone = true
+        case gc: ActiveGameConfiguration => gameConfiguration = gc
       }
     }
 

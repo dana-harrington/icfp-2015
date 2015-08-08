@@ -13,7 +13,7 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 case class Config(inputFiles: Seq[File] = Seq.empty,
-                  powerPhrases: Seq[String] = Seq.empty,
+                  powerPhrases: Set[String] = Set.empty,
                   memoryLimit: Option[Int] = None,
                   timeLimit: Option[Int] = None,
                   cores: Option[Int] = None)
@@ -22,24 +22,18 @@ object Main {
 
   val argsParser = new scopt.OptionParser[Config]("ifcp_2015") {
     opt[File]('f', "file") required() unbounded() valueName "<file>" action { (x, c) =>
-      c.copy(inputFiles = c.inputFiles :+ x)
-    } text "-f is a required file property"
+      c.copy(inputFiles = c.inputFiles :+ x) } text "-f is a required file property"
 
     opt[Int]('t', "time") optional() valueName "<time limit in seconds>" action { (x, c) =>
-      c.copy(timeLimit = Some(x))
-    } text "-t sets a time limit in seconds"
+      c.copy(timeLimit = Some(x)) } text "-t sets a time limit in seconds"
 
     opt[Int]('m', "memory") optional() valueName "<memory limit in MB>" action { (x, c) =>
-      c.copy(memoryLimit = Some(x))
-    } text "-m sets a memory limit in MB"
+      c.copy(memoryLimit = Some(x)) } text "-m sets a memory limit in MB"
 
     opt[String]('p', "phrase") unbounded() valueName "<power phrase>" action { (x, c) =>
-      c.copy(powerPhrases = c.powerPhrases :+ x)
-    } text "-p power phrase"
+      c.copy(powerPhrases = c.powerPhrases + x) } text "-p power phrase"
 
-    opt[Int]('c', "cores") unbounded() valueName "<available cores>" action { (x, c) =>
-      c.copy(cores = Some(x))
-    } text "-c cores available"
+    //TODO: can we use the available cores?
   }
 
   def main(args: Array[String]): Unit = {
@@ -49,12 +43,9 @@ object Main {
       // TODO: handle time limit (dump out any problems that are completed near end of limit)
 
       val gameExecutions = config.inputFiles.flatMap {
-        //new GameExecution(_, timelimitSec, memoryLimitMB, phrasesOfPower.toSet)
         val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
         GameExecution.loadFile(strategy, _, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
       }
-
-      //println(gameExecutions.map(_.toString).mkString(",\n"))
 
       val futures = Future.sequence(gameExecutions.map(_.run))
 
