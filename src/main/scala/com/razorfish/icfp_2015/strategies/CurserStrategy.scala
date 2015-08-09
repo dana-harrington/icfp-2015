@@ -26,6 +26,10 @@ object CurserStrategy extends Strategy {
     }.toMap
   }
 
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = ???
+  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
+    ???
+  }
+
+
 
 }

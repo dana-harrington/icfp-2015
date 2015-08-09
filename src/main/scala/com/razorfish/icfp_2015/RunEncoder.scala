@@ -6,7 +6,7 @@ object RunEncoder {
   def main(args: Array[String]): Unit = {
     //println(s"Nothing so far with args: ${args:_*}" )
 
-    val powerWords = args.toSeq.map(_.toVector)
+    val powerWords = args.toSet
 
     val moves = Seq(
       E,SW,W,                                 //"Ei!" -> (E,SW,W)

@@ -1,32 +1,47 @@
 package com.razorfish.icfp_2015.strategies
 
+import com.razorfish.icfp_2015.MoveEncoder.PowerWord
 import com.razorfish.icfp_2015.{Score, MoveEncoder}
 import com.razorfish.icfp_2015.models.{CompletedGameConfiguration, GameMove, ActiveGameConfiguration}
 
 case class TrialState(moves: Int, score: Option[Int])
 
-case class BruteForce( evaluator: TrialState => Double,
-                       moveEncoder: MoveEncoder) extends SteppedStrategy[TrialState] {
+case class BruteForceUnitAtATimeStrategy( moveEncoder: MoveEncoder,
+                       phrases: Set[PowerWord]) extends SteppedStrategy[Seq[GameMove]] {
 
-  def initialState: TrialState = TrialState(0, None)
+  // TODO: Makes no attempt to avoid repeated states
 
-  var moves = List.empty[GameMove]
+  def initialState = Seq.empty[GameMove]
 
-  def step(gc: ActiveGameConfiguration, state: TrialState): (GameMove, TrialState) = {
-    if (moves.isEmpty) {
-      moves = solveForCurrentUnit()
+  // if we have saved up moves use the next one, otherwise calculate the moves of the next unit
+  def step(gc: ActiveGameConfiguration, precomputedMoves: Seq[GameMove]): (GameMove, Seq[GameMove]) = {
+    precomputedMoves match {
+      case move +: moves =>
+        (move, moves)
+      case Seq() =>
+        val unitMoves = solveForCurrentUnit(gc)._1
+        (unitMoves.head, unitMoves.tail)
     }
-    val nextMove = moves.head
-    moves = moves.tail
-    ???
   }
 
-  def solveForCurrentUnit(): List[GameMove] = ???
+  // Find the highest scoring sequence of moves for a unit by brute force
+  def solveForCurrentUnit(gc: ActiveGameConfiguration): (List[GameMove], Score) = {
+    val bestPathAndScore = Path.allPaths(gc).map { path =>
+      (path, Path.scorePath(path, moveEncoder, phrases))
+    }.maxBy(_._2)
+    (bestPathAndScore._1.moves, bestPathAndScore._2)
+  }
+
 }
 
 case class Path(moves: List[GameMove], score: Score)
 
 object Path {
+  /**
+   * All paths that end is a frozen piece
+   * @param gc
+   * @return
+   */
   def allPaths(gc: ActiveGameConfiguration): Set[Path] = {
     for {
       move <- GameMove.moves
@@ -46,4 +61,9 @@ object Path {
       Path(move :: path.moves, path.score)
     }
   }
+
+  def scorePath(path: Path, moveEncoder: MoveEncoder, phrases: Set[String]): Score = {
+    moveEncoder.encode(path.moves, phrases).powerWordScore
+  }
+
 }

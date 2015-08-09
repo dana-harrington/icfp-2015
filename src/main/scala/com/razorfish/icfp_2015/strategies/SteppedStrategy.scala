@@ -25,6 +25,6 @@ trait SteppedStrategy[State] extends Strategy {
       case (_, gc@CompletedGameConfiguration(_, _)) =>
         None
     }.map(_._1)
-    moveEncoder.encode(moves, phrases.toSeq.map(_.toVector))
+    moveEncoder.encode(moves, phrases)
   }
 }

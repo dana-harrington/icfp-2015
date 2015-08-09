@@ -31,11 +31,11 @@ class EiStrategy extends Strategy {
       case (_, gc@CompletedGameConfiguration(_, _)) =>
         None
     }.map(_._1)
-    SimpleMoveEncoder.encode(moves, phrases.toSeq.map(_.toVector))
+    SimpleMoveEncoder.encode(moves, phrases)
   }
 
   private object SimpleMoveEncoder extends MoveEncoder {
-    def encode(moves: Seq[GameMove], powerWords: Seq[PowerWord]): EncodedMoves = {
+    def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
       val solution: String = String.copyValueOf(moves.flatMap {
         case W => "!"
         case SW => "i"
