@@ -8,6 +8,10 @@ import scalaz.Scalaz._
 class POPStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends Strategy {
   def initialState = ()
 
+  // "Ei!" => E, SW, W
+  // "Ia! Ia! " => SW, SW, W, SE, SW, SW, W
+  // "R'lyeh" => CW, W, SE, E, E, SW
+  // "Yuggoth" => E, CCW, SW, SW, SE, CCW, SW
   val gameMovePhrases = MoveEncoder.phrasesOfPower.map(MoveEncoder.decodeMoves(_)).toSeq.sortBy(_.length).reverse
 
   var allowedGameMovePhrases: Seq[Seq[GameMove]] = Nil
@@ -19,15 +23,6 @@ class POPStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends S
   def incrementIndex = {
     phraseIndex = (phraseIndex + 1) % phrase.length
   }
-
-  //val availableCr
-  // "Ei!" => E, SW, W
-  // "Ia! Ia! " => SW, SW, W, SE, SW, SW, W
-  // "R'lyeh" => CW, W, SE, E, E, SW
-  // "Yuggoth" => E, CCW, SW, SW, SE, CCW, SW
-
-  // These problems have 0 score:
-  // 1, 8, 9, 10, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24
 
   def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
@@ -42,9 +37,6 @@ class POPStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends S
             .filterNot(m => gc.tryMoves(m).isEmpty)
             .headOption.getOrElse(Seq(move))
           phraseIndex = 0
-        }
-        if(phraseIndex == 0){
-
         }
         val newMove = phrase(phraseIndex)
         if (gc.activeUnit.unit.containsCycle(gc.activeUnit.moveHistory :+ newMove)) {

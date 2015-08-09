@@ -34,7 +34,7 @@ class CurserStrategySpec extends StrategySpec {
     "not be tricked into using power phrases with cycles" in {
       val badPhrase = "f'tn"
       val board = Board(10, 10, Set.empty)
-      val source = Seq(GameUnit(Set(Cell(1,1), Cell(2,1)), Cell(1,1))).iterator
+      val source = Seq(GameUnit(Set(Cell(1,1), Cell(2,1)), Cell(1,1)))
 
       def strategy(phrases: Set[String]) = new CurserStrategy(MoveEncoder.phrasesOfPower)
       val play = strategy(Set(badPhrase)).apply(board, source)

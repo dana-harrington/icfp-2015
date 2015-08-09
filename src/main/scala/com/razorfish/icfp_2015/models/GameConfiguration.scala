@@ -34,7 +34,7 @@ case class DisqualificationException(gc: ActiveGameConfiguration)
 
 case class ActiveGameConfiguration( board: Board,
                                   activeUnit: ActiveUnit,
-                                  source: Iterator[GameUnit],
+                                  source: Source,
                                   score: Score,
                                   linesClearedWithPreviousUnit: Int) extends GameConfiguration {
 
@@ -121,9 +121,9 @@ case class ActiveGameConfiguration( board: Board,
    */
   def freeze(): GameConfiguration = {
     val freezeState = freezeResult
-    if (source.hasNext) {
+    if (!source.isEmpty) {
 
-      val newActiveUnit = source.next().center(freezeState.board)
+      val newActiveUnit = source.head.center(freezeState.board)
       newActiveUnit.fold[GameConfiguration] {
 
         //Can't place new unit
@@ -134,7 +134,7 @@ case class ActiveGameConfiguration( board: Board,
         ActiveGameConfiguration(
           board = freezeState.board,
           activeUnit = ActiveUnit(activeUnit),
-          source,
+          source.tail,
           score + freezeState.score,
           freezeState.linesCleared
         )
@@ -154,10 +154,10 @@ object GameConfiguration {
    * @return initial configuration with given board and unit source
    */
   def apply(board: Board, source: Source): GameConfiguration = {
-    source.next().center(board).fold[GameConfiguration]{
+    source.head.center(board).fold[GameConfiguration]{
       CompletedGameConfiguration(board, 0)
     } { startUnit =>
-      ActiveGameConfiguration(board, ActiveUnit(startUnit), source, 0, 0)
+      ActiveGameConfiguration(board, ActiveUnit(startUnit), source.tail, 0, 0)
     }
   }
 }

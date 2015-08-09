@@ -2,7 +2,7 @@ package com.razorfish.icfp_2015.models
 
 import com.razorfish.icfp_2015.RNGProvider
 
-class UnitSource(seed: Long, units: IndexedSeq[GameUnit], sourceLength: Int) extends Source {
+class UnitSource(seed: Long, units: IndexedSeq[GameUnit], sourceLength: Int) extends Iterator[GameUnit] {
   require(sourceLength >= 0)
 
   private val modulus = BigDecimal(2).pow(32).toLongExact

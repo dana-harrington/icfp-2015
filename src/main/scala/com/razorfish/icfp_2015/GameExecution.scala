@@ -17,7 +17,7 @@ class GameExecution(strategy: StrategyBuilder,
                     memoryLimitMB: Option[Int],
                     phrasesOfPower: Set[PowerPhrase]) {
 
-  val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
+  val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength).toSeq
 
   def run: Future[Output] = Future {
     val gameplay = strategy(phrasesOfPower)(parse.board, source)

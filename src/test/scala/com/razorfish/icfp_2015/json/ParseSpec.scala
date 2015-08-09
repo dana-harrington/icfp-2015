@@ -73,7 +73,7 @@ class ParseSpec extends org.specs2.mutable.Specification {
           println("----------------------------------------------------")
           gameUnits.forall {
             case gameUnit =>
-              val gameConfiguration = ActiveGameConfiguration(parse.board, ActiveUnit(NilGameUnit), Seq(gameUnit).toIterator, 0, 0).freeze.asInstanceOf[ActiveGameConfiguration]
+              val gameConfiguration = ActiveGameConfiguration(parse.board, ActiveUnit(NilGameUnit), Seq(gameUnit), 0, 0).freeze.asInstanceOf[ActiveGameConfiguration]
               gameConfiguration.board.print(gameConfiguration.activeUnit)
             true
           }

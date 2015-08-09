@@ -27,7 +27,7 @@ trait StrategySpec extends Specification {
 
   def specOutput(output: Output, parse: Parse, seed: Long, expectedScore: Option[Score], isDebug: Boolean, phrases: Set[PowerPhrase]): MatchResult[_] = {
     val gameMoves = solutionToGameMoves(output.solution)
-    val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
+    val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength).toSeq
 
     var gameConfiguration = GameConfiguration(parse.board, source).asInstanceOf[ActiveGameConfiguration]
     var completedGame: Option[CompletedGameConfiguration] = None
@@ -69,7 +69,7 @@ trait StrategySpec extends Specification {
     val parse = Parse(file)
     val seed = parse.sourceSeeds.head
     val gameExecution = new GameExecution(strategy, parse, seed, None, config.timeLimit, config.memoryLimit, config.powerPhrases)
-    val output = Await.result(gameExecution.run, 20 seconds)
+    val output = Await.result(gameExecution.run, 5 minutes)
     specOutput(output, parse, seed, expectedScore, isDebug, phrases)
   }
 }
@@ -100,11 +100,8 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
 
   "strategySpec" should {
     "process the entire ICFP supplied solution" in {
-
       val file = new File("src/test/resources/problems/problem_6.json")
-      val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
       val expectedScore = Some(3261L)
-
       specOutput(icfpValidOutput, Parse(file), 0, expectedScore, false, MoveEncoder.phrasesOfPower)
     }
 
@@ -117,7 +114,7 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       val input = Parse(file)
       val startGC = GameConfiguration(
         input.board,
-        new UnitSource(input.sourceSeeds.head, input.gameUnits, input.sourceLength))
+        new UnitSource(input.sourceSeeds.head, input.gameUnits, input.sourceLength).toSeq)
         .asInstanceOf[ActiveGameConfiguration]
       val moves = MoveEncoder.decodeMoves(submittedSolution0.solution)
       val result = moves.foldLeft[GameConfiguration](startGC) {
