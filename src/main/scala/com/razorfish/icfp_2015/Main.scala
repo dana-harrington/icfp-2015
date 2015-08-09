@@ -2,7 +2,7 @@ package com.razorfish.icfp_2015
 
 import java.io.File
 
-import com.razorfish.icfp_2015.strategies.{PhraseAfterthoughtStrategy, ReallyStupidAI}
+import com.razorfish.icfp_2015.strategies.{CurserStrategy, StrategyBuilder, PhraseAfterthoughtStrategy, ReallyStupidAI}
 import play.api.libs.json._
 
 import com.razorfish.icfp_2015.json.Output
@@ -17,8 +17,11 @@ case class Config(inputFiles: Seq[File] = Seq.empty,
                   timeLimit: Option[Int] = None,
                   cores: Option[Int] = None)
 
-object Main {
+object Main extends Main(phrases => PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases))
 
+object CurserMain extends Main(new CurserStrategy(_))
+
+class Main(strategyBuilder: StrategyBuilder) {
   val argsParser = new scopt.OptionParser[Config]("ifcp_2015") {
     opt[File]('f', "file") required() unbounded() valueName "<file>" action { (x, c) =>
       c.copy(inputFiles = c.inputFiles :+ x) } text "-f is a required file property"
@@ -42,8 +45,8 @@ object Main {
       // TODO: handle time limit (dump out any problems that are completed near end of limit)
 
       val gameExecutions = config.inputFiles.flatMap {
-        def strategy(phrases: Set[PowerPhrase]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
-        GameExecution.loadFile(strategy, _, None, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
+
+        GameExecution.loadFile(strategyBuilder, _, None, config.timeLimit, config.memoryLimit, config.powerPhrases)
       }
 
       val futures = Future.sequence(gameExecutions.map(_.run))
