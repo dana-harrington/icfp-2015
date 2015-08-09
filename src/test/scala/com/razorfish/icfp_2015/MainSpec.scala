@@ -12,25 +12,18 @@ class MainSpec extends Specification {
 
       skipped
 
-      val generated = "ei! ei! ei! ei! ei! ei! ei! ei! ei! ei!ei! ei! ei! ei!ei! ei! ei! ei! ei! ei! ei!ei! ei"
-      val fail = generated.take(30) + "eeeeeeee"
-      val output = Output(8, 0, Submit.generateTag("eistrategy"), "ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ")
-      val cursorOutput = Output(0, 0, Submit.generateTag("cursor -10"), "ei!ei!ei!ei!ei!ei!ei!ei!nnei!ei!ei!ei!ei!ei!ei!ei!nyuggothyuggothei!nyuggothyuggoth4yuggothei!ei!4yuggothei!nnyuggothei!ei!44yuggothei!4ei!4444nei!ei!4nei!nei!4".dropRight(10))
+      val generated = "ei!ei!yuggothnei!ei!ei!nei!ei!nei!44".dropRight(10)
+      val output = Output(8, 0, Submit.generateTag("debug curser"), generated)
 
-      val s = (0 to 1).map {
-        case i =>
-          val g = generated.dropRight(i)
-          Output(1, 0, Submit.generateTag("generated -- " + i), g)
-      }
-      Submit.submit(Seq(cursorOutput)).isSuccess === true
+      Submit.submit(Seq(output)).isSuccess === true
     }
 
     "submit single" in {
 
       skipped
 
-      val tag = Submit.generateTag("EiStrategy")
-      def strategy(phrases: Set[PowerPhrase]) = new EiStrategy(phrases)
+      val tag = Submit.generateTag("debug curser")
+      def strategy(phrases: Set[PowerPhrase]) = new EiStrategy(phrases, InLineEncoder)
 
       //val tag = Submit.generateTag("Cursor")
       //def strategy(phrases: Set[PowerPhrase]) = new CurserStrategy(phrases)
