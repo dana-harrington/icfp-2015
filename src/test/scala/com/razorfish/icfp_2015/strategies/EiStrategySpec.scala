@@ -7,7 +7,7 @@ import com.razorfish.icfp_2015._
 
 class EiStrategySpec extends StrategySpec {
 
-  "problem_0 simulation" in {
+  "replay constant" in {
 
     skipped
 
@@ -15,17 +15,18 @@ class EiStrategySpec extends StrategySpec {
     val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
     //val expectedScore = Some(3261L)
 
-    val output = Output(0, 0, Submit.generateTag("EiStrategy"), "ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!eei!ei!ei!ei!ei!ei!ei!eei!ei!ei!ei!ei!ei!ei!ei!eei!ei!ei!eeei!ei!eeeei!ei!eeei!ei!ei!ei!ei!ei!eei!ei!ei!ei!ei!")
+    val solution = "ei! ei! ei! ei! ei! ei! ei! ei! ei! ei!ei! ei! ei! ei! ei! ei! ei! ei! ei! ei"
+    val output = Output(0, 0, None, solution)
     specOutput(output, Parse(file), 0, None, true, MoveEncoder.phrasesOfPower)
   }
 
-  "problem_0 simulation" in {
+  "simulation" in {
 
     skipped
 
-    val file = new File("src/test/resources/problems/problem_1.json")
+    val file = new File("src/test/resources/problems/problem_0.json")
     val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
-    def eiStrategy(phrases: Set[PowerPhrase]) = new EiStrategy(phrases)
+    def eiStrategy(phrases: Set[PowerPhrase]) = new EiStrategy(phrases, InLineEncoder)
     spec(file, eiStrategy, config, MoveEncoder.phrasesOfPower, None, true)
   }
 
