@@ -25,7 +25,7 @@ trait StrategySpec extends Specification {
     solution.toCharArray.flatMap(getMove(_)).toSeq
   }
 
-  def specOutput(output: Output, parse: Parse, seed: Long, expectedScore: Option[Score], isDebug: Boolean): MatchResult[_] = {
+  def specOutput(output: Output, parse: Parse, seed: Long, expectedScore: Option[Score], isDebug: Boolean, phrases: Set[PowerPhrase]): MatchResult[_] = {
     val gameMoves = solutionToGameMoves(output.solution)
     val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
 
@@ -45,7 +45,8 @@ trait StrategySpec extends Specification {
       gameConfiguration.update(move) match {
         case cgc: CompletedGameConfiguration =>
           moveCount += 1
-          if (isDebug) println(s"Move #$moveCount: ${move}: Game over   Score: ${cgc.score}")
+          val totalScore = cgc.score + PowerPhrase.scoreMoves(output.solution, phrases)
+          if (isDebug) println(s"Move #$moveCount: ${move}: Game over   Score: $totalScore")
           completedGame = Some(cgc)
         case gc: ActiveGameConfiguration if completedGame.isEmpty => gameConfiguration = gc
           moveCount += 1
@@ -63,12 +64,12 @@ trait StrategySpec extends Specification {
     gameMoves.size === moveCount
   }
 
-  def spec(file: File, strategy: StrategyBuilder, config: Config, expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
+  def spec(file: File, strategy: StrategyBuilder, config: Config,phrases: Set[PowerPhrase], expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
     val parse = Parse(file)
     val seed = parse.sourceSeeds.head
     val gameExecution = new GameExecution(strategy, parse, seed, None, config.timeLimit, config.memoryLimit, config.powerPhrases)
     val output = Await.result(gameExecution.run, 20 seconds)
-    specOutput(output, parse, seed, expectedScore, isDebug)
+    specOutput(output, parse, seed, expectedScore, isDebug, phrases)
   }
 }
 
@@ -105,7 +106,7 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
       val expectedScore = Some(3261L)
 
-      specOutput(icfpValidOutput, Parse(file), 0, expectedScore, false)
+      specOutput(icfpValidOutput, Parse(file), 0, expectedScore, false, MoveEncoder.phrasesOfPower)
     }
 
     "process our submitted solution" in {
@@ -126,7 +127,7 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       val powerPhraseScore = PowerPhrase.scoreMoves(submittedSolution0.solution, MoveEncoder.phrasesOfPower)
       unitScore + powerPhraseScore === 431
 
-      specOutput(submittedSolution0, Parse(file), 0, expectedScore, false)
+      specOutput(submittedSolution0, Parse(file), 0, expectedScore, false, MoveEncoder.phrasesOfPower)
     }
     /*
         "process our submitted solution" in {
