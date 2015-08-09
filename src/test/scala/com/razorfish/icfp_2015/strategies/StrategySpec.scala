@@ -122,7 +122,9 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
         case (gc, move) =>
           gc.asInstanceOf[ActiveGameConfiguration].update(move)
       }
-      //result.score === 431
+      val unitScore = result.score
+      val powerPhraseScore = PowerPhrase.scoreMoves(submittedSolution0.solution, MoveEncoder.phrasesOfPower)
+      unitScore + powerPhraseScore === 431
 
       specOutput(submittedSolution0, Parse(file), 0, expectedScore, false)
     }
