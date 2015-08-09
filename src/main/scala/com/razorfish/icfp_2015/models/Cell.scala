@@ -33,8 +33,8 @@ case class Cell(column: Int, row: Int) {
         else Cell(column, row = row + 1)
       }
       case SE => {
-        if (row % 2 == 0) Cell(column = column + 1, row = row + 1)
-        else Cell(column, row = row + 1)
+        if (row % 2 == 0) Cell(column, row = row + 1)
+        else Cell(column = column + 1, row = row + 1)
       }
     }
   }
