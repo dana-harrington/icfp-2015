@@ -40,10 +40,6 @@ case class GameUnit(members: Set[Cell], pivot: Cell) {
     configurations.toSet.size != configurations.size
   }
 
-  def canRotate(rotation: Rotation): Boolean = {
-    //TODO: do we check history?
-    this.members == this.move(rotation).members
-  }
 }
 
 object NilGameUnit extends GameUnit(Set.empty, NilCell) {

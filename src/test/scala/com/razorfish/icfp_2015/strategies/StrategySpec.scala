@@ -40,13 +40,14 @@ trait StrategySpec extends Specification {
     }
 
     var moveCount = 0
+    var score: Option[Long] = None
     for (move <- gameMoves) {
 
       gameConfiguration.update(move) match {
         case cgc: CompletedGameConfiguration =>
           moveCount += 1
-          val totalScore = cgc.score + PowerPhrase.scoreMoves(output.solution, phrases)
-          if (isDebug) println(s"Move #$moveCount: ${move}: Game over   Score: $totalScore")
+          score = Some(cgc.score + PowerPhrase.scoreMoves(output.solution, phrases))
+          if (isDebug) println(s"Move #$moveCount: ${move}: Game over   Score: ${score.get}")
           completedGame = Some(cgc)
         case gc: ActiveGameConfiguration if completedGame.isEmpty => gameConfiguration = gc
           moveCount += 1
@@ -60,7 +61,7 @@ trait StrategySpec extends Specification {
     }
 
     completedGame.isDefined === true
-    if (expectedScore.isDefined) completedGame.get.score === expectedScore.get
+    if (expectedScore.isDefined) score.get === expectedScore.get
     gameMoves.size === moveCount
   }
 
@@ -112,7 +113,7 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
     "process our submitted solution" in {
       val file = new File("src/test/resources/problems/problem_0.json")
       val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
-      val expectedScore = None //TODO: calculate correct score Some(431L)
+      val expectedScore = Some(431L)
       val input = Parse(file)
       val startGC = GameConfiguration(
         input.board,
@@ -125,7 +126,6 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       }
       val unitScore = result.score
       val powerPhraseScore = PowerPhrase.scoreMoves(submittedSolution0.solution, MoveEncoder.phrasesOfPower)
-      unitScore + powerPhraseScore === 431
 
       specOutput(submittedSolution0, Parse(file), 0, expectedScore, false, MoveEncoder.phrasesOfPower)
     }
