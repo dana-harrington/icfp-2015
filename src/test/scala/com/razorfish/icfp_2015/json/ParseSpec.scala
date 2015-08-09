@@ -2,7 +2,7 @@ package com.razorfish.icfp_2015.json
 
 import java.io.File
 
-import com.razorfish.icfp_2015.models.{ActiveGameConfiguration, NilGameUnit}
+import com.razorfish.icfp_2015.models.{ActiveUnit, ActiveGameConfiguration, NilGameUnit}
 
 object ParseSpec {
   val problems = (0 to 24).map(i => new File(s"src/test/resources/problems/problem_$i.json"))
@@ -73,7 +73,7 @@ class ParseSpec extends org.specs2.mutable.Specification {
           println("----------------------------------------------------")
           gameUnits.forall {
             case gameUnit =>
-              val gameConfiguration = ActiveGameConfiguration(parse.board, NilGameUnit, Seq(gameUnit).toIterator, 0, 0).freeze.asInstanceOf[ActiveGameConfiguration]
+              val gameConfiguration = ActiveGameConfiguration(parse.board, ActiveUnit(NilGameUnit), Seq(gameUnit).toIterator, 0, 0).freeze.asInstanceOf[ActiveGameConfiguration]
               gameConfiguration.board.print(gameConfiguration.activeUnit)
             true
           }

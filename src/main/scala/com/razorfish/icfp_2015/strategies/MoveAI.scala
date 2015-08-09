@@ -1,6 +1,6 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.models.{ActiveGameConfiguration, GameMove, SW}
+import com.razorfish.icfp_2015.models.{MoveSuccess, ActiveGameConfiguration, GameMove, SW}
 
 trait MoveAI {
   def step(gc: ActiveGameConfiguration): GameMove
@@ -18,7 +18,7 @@ object ReallyStupidAI extends MoveAI {
 object QuiteStupidAI extends MoveAI {
   override def step(gc: ActiveGameConfiguration): GameMove = {
     val moves = GameMove.moves
-    val (nonFreezeMoves, freezeMoves) = moves.partition(gc.tryMove(_).isDefined)
+    val (nonFreezeMoves, freezeMoves) = moves.partition(gc.tryMove(_).isInstanceOf[MoveSuccess])
     nonFreezeMoves.headOption.orElse(freezeMoves.headOption).head
   }
 }

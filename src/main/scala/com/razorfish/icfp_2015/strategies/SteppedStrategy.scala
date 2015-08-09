@@ -18,7 +18,7 @@ trait SteppedStrategy[State] extends Strategy {
   def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     val moves = unfold((initialState, initialConfiguration)) {
-      case (state, gc@ActiveGameConfiguration(_, _, _, _, _)) =>
+      case (state, gc: ActiveGameConfiguration) =>
         val (move, newState) = step(gc, state)
         val newGC = gc.update(move)
         Option((move, newGC), (newState, newGC))
@@ -32,14 +32,12 @@ trait SteppedStrategy[State] extends Strategy {
 trait SteppedEncodedStrategy[State] extends Strategy {
   def initialState: State
 
-  def phrases: Set[String]
-
   def step(gc: ActiveGameConfiguration, state: State): (Char, State)
 
   def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     val moves = unfold((initialState, initialConfiguration)) {
-      case (state, gc@ActiveGameConfiguration(_, _, _, _, _)) =>
+      case (state, gc: ActiveGameConfiguration) =>
         val (move, newState) = step(gc, state)
         val newGC = gc.update(MoveEncoder.decodeMove(move))
         Option((move, newGC), (newState, newGC))

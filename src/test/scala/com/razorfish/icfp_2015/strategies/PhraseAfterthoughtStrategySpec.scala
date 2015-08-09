@@ -2,10 +2,10 @@ package com.razorfish.icfp_2015.strategies
 
 import java.io.File
 
-import com.razorfish.icfp_2015.{MoveEncoder, Submit, Config, DumbEncoder}
+import com.razorfish.icfp_2015._
 
 class PhraseAfterthoughtStrategySpec extends StrategySpec {
-  def strategy(phrases: Set[String]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
+  def strategy(phrases: Set[PowerPhrase]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
 
   "problem_18 simulation" in {
     skipped

@@ -10,7 +10,7 @@ import scala.util.Random
  */
 
 
-class CurserStrategy(encoder: MoveEncoder, val phrases: Set[String]) extends SteppedEncodedStrategy[Seq[Char]] {
+class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrategy[Seq[Char]] {
 
   def initialState = Seq.empty[Char]
 
@@ -26,7 +26,7 @@ class CurserStrategy(encoder: MoveEncoder, val phrases: Set[String]) extends Ste
    * @param phrases
    * @return map of power phrases to their sequence of moves
    */
-  def phraseMoves(phrases: Set[String]): Map[String, Seq[GameMove]] = {
+  def phraseMoves(phrases: Set[String]): Map[PowerPhrase, Seq[GameMove]] = {
     phrases.map { phrase =>
       phrase -> phrase.map(decodeMove)
     }.toMap
@@ -49,7 +49,7 @@ class CurserStrategy(encoder: MoveEncoder, val phrases: Set[String]) extends Ste
     }
     val usablePhrases = for {
       (phrase, phrasePath) <- phrasePaths
-      if !gc.activeUnit.containsCycle(phrasePath)
+      if !gc.activeUnit.unit.containsCycle(phrasePath)
       if gc.tryMoves(phrasePath).isDefined // Does not freeze piece (or end game)
     } yield {
       phrase

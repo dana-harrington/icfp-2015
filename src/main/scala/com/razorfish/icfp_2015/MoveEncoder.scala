@@ -90,7 +90,7 @@ object DumbEncoder extends MoveEncoder {
 
 object MoveEncoder {
 
-  val phrasesOfPower = Set("ei!")
+  val phrasesOfPower = Set("ei!", "yuggoth")
 
   type PowerWord = String
   type PowerPhrase = Vector[Char]
@@ -122,7 +122,13 @@ object MoveEncoder {
   val decodeMove: Map[Char, GameMove] = {
     MoveEncoder.moveEncodings.flatMap {
       case (move, encodings) =>
-        encodings.map(_ -> move)
+        encodings.map(_.toLower -> move) ++ encodings.map(_.toUpper -> move)
+    }
+  }
+
+  def decodeMoves(moves: Seq[Char]): Seq[GameMove] = {
+    moves.flatMap { em =>
+      decodeMove.get(em)
     }
   }
 }

@@ -15,7 +15,7 @@ object Path {
   def allPaths(gc: ActiveGameConfiguration): Set[Path] = {
     for {
       move <- GameMove.moves
-      path <- gc.tryMove(move) match {
+      path <- gc.tryMove(move).toOption match {
         case None =>
           val score = gc.freezeResult.score
           Set(Path(List(move), gc.freezeResult.score))
@@ -32,7 +32,7 @@ object Path {
     }
   }
 
-  def scorePath(path: Path, moveEncoder: MoveEncoder, phrases: Set[String]): Score = {
+  def scorePath(path: Path, moveEncoder: MoveEncoder, phrases: Set[PowerPhrase]): Score = {
     moveEncoder.encode(path.moves, phrases).powerWordScore
   }
 
