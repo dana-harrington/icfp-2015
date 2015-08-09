@@ -10,6 +10,8 @@ sealed trait MatchState
 
 case class NodeState(index: Int, powerWords: Seq[PowerMove]) extends MatchState
 
+import com.razorfish.icfp_2015.strategies.POPStrategy
+
 trait MoveEncoder {
   def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves
 }
@@ -50,7 +52,10 @@ object InLineEncoder extends MoveEncoder {
         (encoded.dropRight(acc._2.index+1) ++ replacement, NodeState(newStateIndex,newPhrases))
       }
     }
-    EncodedMoves(result._1.foldLeft("")(_+_), 0L)
+    val score = powerPhrases.map { phrase =>
+      phrase.foldLeft("")(_+_).r.findAllIn(result._1).length
+    }
+    EncodedMoves(result._1.foldLeft("")(_+_), score.sum)
   }
 
   def stateForMoves(moves: Seq[GameMove], powerPhrases: Seq[PowerMove]): Seq[PowerMove] = {
