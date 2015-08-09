@@ -1,15 +1,21 @@
 package com.razorfish.icfp_2015.strategies
 
 import com.razorfish.icfp_2015.MoveEncoder.PowerWord
-import com.razorfish.icfp_2015.{PowerPhrase, MoveEncoder, EncodedMoves}
 import com.razorfish.icfp_2015.models._
+import com.razorfish.icfp_2015.{EncodedMoves, MoveEncoder}
 
 import scalaz.Scalaz._
 
-class EiStrategy extends Strategy {
+class POPStrategy extends Strategy {
   def initialState = ()
 
-  // "Ei! " => E, SW, W, SE
+  // "Ei!" => E, SW, W
+  // "Ia! Ia! " => SW, SW, W, SE, SW, SW, W
+  // "R'lyeh" => CW, W, SE, E, E, SW
+  // "Yuggoth" => E, CCW, SW, SW, SE, CCW, SW
+
+  // These problems have 0 score:
+  // 1, 8, 9, 10, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24
 
   def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
@@ -44,10 +50,17 @@ class EiStrategy extends Strategy {
         case CW => "d"
         case CCW => "k"
       }.toArray)
-      val powerWordScore = PowerPhrase.phraseOfPowerScore("ei!", "ei!".r.findAllMatchIn(solution).length)
+      val powerWordScore = phraseOfPowerScore("ei!", "ei!".r.findAllMatchIn(solution).length)
       EncodedMoves(solution, powerWordScore)
     }
 
+    def phraseOfPowerScore(phraseOfPower: String, occurances: Int) = {
+      val lenp = phraseOfPower.length
+      val repsp = occurances
+      val power_bonusp = if (occurances > 0) 300 else 0
+
+      2 * lenp * repsp + power_bonusp
+    }
   }
 
 }

@@ -81,6 +81,8 @@ object DumbEncoder extends MoveEncoder {
 
 object MoveEncoder {
 
+  val phrasesOfPower = Set("ei!")
+
   type PowerWord = String
 
   lazy val commandCode: Map[GameMove, Vector[Char]] = Map(

@@ -3,7 +3,7 @@ package com.razorfish.icfp_2015.strategies
 import java.io.File
 
 import com.razorfish.icfp_2015.json.{Output, Parse}
-import com.razorfish.icfp_2015.{Config, Submit}
+import com.razorfish.icfp_2015.{MoveEncoder, Config, Submit}
 
 class EiStrategySpec extends StrategySpec {
 
@@ -12,10 +12,10 @@ class EiStrategySpec extends StrategySpec {
     skipped
 
     val file = new File("src/test/resources/problems/problem_0.json")
-    val config = Config(Seq(file), Set("Ei!"), None, None)
+    val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
     //val expectedScore = Some(3261L)
 
-    val output = Output(0, 0, Submit.generateTag("EiStrategy"), "Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!Ei!EEi!Ei!Ei!Ei!Ei!Ei!Ei!EEi!Ei!Ei!Ei!Ei!Ei!Ei!Ei!EEi!Ei!Ei!EEEi!Ei!EEEEi!Ei!EEEi!Ei!Ei!Ei!Ei!Ei!EEi!Ei!Ei!Ei!Ei!")
+    val output = Output(0, 0, Submit.generateTag("EiStrategy"), "ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!ei!eei!ei!ei!ei!ei!ei!ei!eei!ei!ei!ei!ei!ei!ei!ei!eei!ei!ei!eeei!ei!eeeei!ei!eeei!ei!ei!ei!ei!ei!eei!ei!ei!ei!ei!")
     specOutput(output, Parse(file), 0, None, true)
   }
 
@@ -23,9 +23,9 @@ class EiStrategySpec extends StrategySpec {
 
     skipped
 
-    val file = new File("src/test/resources/problems/problem_0.json")
-    val config = Config(Seq(file), Set("Ei!"), None, None)
-    spec(file, new EiStrategy, config)
+    val file = new File("src/test/resources/problems/problem_1.json")
+    val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
+    spec(file, new EiStrategy, config, None, true)
   }
 
 }

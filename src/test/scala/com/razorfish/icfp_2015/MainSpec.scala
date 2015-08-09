@@ -8,7 +8,7 @@ import com.razorfish.icfp_2015.strategies.EiStrategy
 class MainSpec extends Specification {
 
   "output" should {
-    "submit" in {
+    "submit constant" in {
 
       skipped
 
@@ -16,7 +16,16 @@ class MainSpec extends Specification {
 
       Submit.submit(Seq(output)).isSuccess === true
     }
+/*
+    "submit 0" in {
 
+      val tag = Submit.generateTag("EiStrategy")
+      val strategy = new EiStrategy
+
+      val outputs = Submit.outputOfProblemForStrategy(strategy, tag, 1)
+      success
+    }
+*/
     "submitAll" in {
 
       skipped

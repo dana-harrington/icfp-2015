@@ -35,7 +35,12 @@ object Input {
       (__ \ "y").read[Int]
       )(Cell.apply _)
   }
-  private implicit val readsGameUnit = Json.reads[GameUnit]
+  private implicit val readsGameUnit: Reads[GameUnit] = {
+    ((__ \ "members").read[Set[Cell]] and
+      (__ \ "pivot").read[Cell]
+      )(GameUnit.apply(_, _, Nil))
+  }
+
   implicit val reads = Json.reads[Input]
 }
 
