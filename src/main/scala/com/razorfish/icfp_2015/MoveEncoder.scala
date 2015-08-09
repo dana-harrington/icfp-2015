@@ -8,7 +8,7 @@ case class EncodedMoves(moves: Seq[Char], powerWordScore: Score)
 
 sealed trait MatchState
 
-case class NodeState(index: Int, powerWords: Seq[PowerPhrase]) extends MatchState
+case class NodeState(index: Int, powerWords: Seq[PowerMove]) extends MatchState
 
 trait MoveEncoder {
   def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves
@@ -26,7 +26,6 @@ object InLineEncoder extends MoveEncoder {
     val result = moves.zipWithIndex.foldLeft[(Vector[Char], NodeState)]((Vector(), NodeState(0,powerPhrases))) { case (acc, (move, i)) =>
       val moveVector = movesCode(move)
       val encoded = acc._1 :+ movesCode(move).head
-      println(encoded.foldRight("")(_+_))
       val matches = partialMatches(moveVector, acc._2.index, acc._2.powerWords)
       val rematched = {
         if (matches.nonEmpty) matches
@@ -54,15 +53,15 @@ object InLineEncoder extends MoveEncoder {
     EncodedMoves(result._1.foldLeft("")(_+_), 0L)
   }
 
-  def stateForMoves(moves: Seq[GameMove], powerPhrases: Seq[PowerPhrase]): Seq[PowerPhrase] = {
-    moves.zipWithIndex.foldLeft[Seq[PowerPhrase]](powerPhrases){ case (acc, (move, i)) =>
+  def stateForMoves(moves: Seq[GameMove], powerPhrases: Seq[PowerMove]): Seq[PowerMove] = {
+    moves.zipWithIndex.foldLeft[Seq[PowerMove]](powerPhrases){ case (acc, (move, i)) =>
       val moveVector = movesCode(move)
       partialMatches(moveVector ,i, acc)
     }
   }
 
 
-  def partialMatches(moveVect: Vector[Char], index: Int, powerPhrases: Seq[PowerPhrase]): Seq[PowerPhrase] = {
+  def partialMatches(moveVect: Vector[Char], index: Int, powerPhrases: Seq[PowerMove]): Seq[PowerMove] = {
     val longPowerWords = powerPhrases.filter(_.length > index).filter { word =>
       moveVect contains word(index).toLower
     }
@@ -70,11 +69,9 @@ object InLineEncoder extends MoveEncoder {
     longPowerWords ++ shortPowerWords
   }
 
-  def choosePowerWord(state: NodeState): Option[PowerPhrase] = {
+  def choosePowerWord(state: NodeState): Option[PowerMove] = {
     state.powerWords.find { word =>
-      val foundWord = word.length <= state.index && state.powerWords.forall(_.length <= word.length)
-      if(foundWord) println(state.powerWords + "\n\n")
-      foundWord
+      word.length <= state.index && state.powerWords.forall(_.length <= word.length)
     }
   }
 }
@@ -93,7 +90,7 @@ object MoveEncoder {
   val phrasesOfPower = Set("ei!", "yuggoth")
 
   type PowerWord = String
-  type PowerPhrase = Vector[Char]
+  type PowerMove = Vector[Char]
 
   lazy val movesCode: Map[GameMove, Vector[Char]] = Map(
     W -> "p'!.03".toVector,
