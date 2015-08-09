@@ -1,15 +1,20 @@
 package com.razorfish.icfp_2015.strategies
 
 import com.razorfish.icfp_2015.MoveEncoder.PowerWord
-import com.razorfish.icfp_2015.{MoveEncoder, EncodedMoves}
 import com.razorfish.icfp_2015.models._
+import com.razorfish.icfp_2015.{EncodedMoves, MoveEncoder}
 
 import scalaz.Scalaz._
 
-class EiStrategy extends Strategy {
+class POPStrategy extends Strategy {
   def initialState = ()
 
-  // "Ei! " => E, SW, W, SE
+  // "Ei!" => E, SW, W
+  // "Ia! Ia! " => SW, SW, W, SE, SW, SW, W
+  // "R'lyeh" => CW, W, SE, E, E, SW
+  // "Yuggoth" => E, CCW, SW, SW, SE, CCW, SW
+
+  // 1, 8, 9, 10, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24
 
   def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)

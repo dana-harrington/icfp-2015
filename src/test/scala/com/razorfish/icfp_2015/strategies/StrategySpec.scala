@@ -5,7 +5,7 @@ import java.io.File
 import org.specs2.matcher.MatchResult
 import org.specs2.mutable.Specification
 
-import com.razorfish.icfp_2015.{Score, Config, GameExecution, MoveEncoder}
+import com.razorfish.icfp_2015._
 import com.razorfish.icfp_2015.json.{Output, Parse}
 import com.razorfish.icfp_2015.models._
 import scala.concurrent.duration._
@@ -96,14 +96,13 @@ eemimimeeeemimimiiiipmeemimimiimiimimmimeeemimimmippipmmiim
 emimmipimeeeemimmeemimiippimeeeeemimimmmimmmeeeemimimiiipim
 miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
 
-  val submittedSolution0 = Output(0, 0, None, """
-ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei""")
+  val submittedSolution0 = Output(0, 0, None, "ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei")
 
   "strategySpec" should {
     "process the entire ICFP supplied solution" in {
 
       val file = new File("src/test/resources/problems/problem_6.json")
-      val config = Config(Seq(file), Set("Ei!"), None, None)
+      val config = Config(Seq(file), Submit.phrasesOfPower, None, None)
       val expectedScore = Some(3261L)
 
       specOutput(icfpValidOutput, Parse(file), 0, expectedScore, false)
@@ -111,11 +110,20 @@ ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei""
 
     "process our submitted solution" in {
       val file = new File("src/test/resources/problems/problem_0.json")
-      val config = Config(Seq(file), Set("Ei!"), None, None)
+      val config = Config(Seq(file), Submit.phrasesOfPower, None, None)
       val expectedScore = None //TODO: calculate correct score Some(431L)
 
       specOutput(submittedSolution0, Parse(file), 0, expectedScore, false)
     }
+    /*
+        "process our submitted solution" in {
+          val file = new File("src/test/resources/problems/problem_0.json")
+          val config = Config(Seq(file), Set("Ei!"), None, None)
+          val expectedScore = None //TODO: calculate correct score Some(431L)
+
+          specOutput("r'lyeh", Parse(file), 0, expectedScore, false)
+        }
+        */
   }
 
 }

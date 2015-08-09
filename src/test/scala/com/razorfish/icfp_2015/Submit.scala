@@ -5,7 +5,7 @@ import java.util.Date
 import play.api.libs.json.Json
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.razorfish.icfp_2015.json.{Output, ParseSpec}
+import com.razorfish.icfp_2015.json.{Parse, Output, ParseSpec}
 import com.razorfish.icfp_2015.strategies.Strategy
 
 import scala.concurrent.duration._
@@ -13,6 +13,8 @@ import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
 object Submit {
+
+  val phrasesOfPower = Set("ei!")
 
   val apiToken = "ttrd/Lf4+K4MgNvfhXTSqTaz0GxROvdJw5wzOo+78Lc="
   val teamId = 294
@@ -55,13 +57,32 @@ object Submit {
     }
   }
 
+  def outputOfProblemForStrategy(strategy: Strategy, tag: Option[String], problem: Int): Seq[Output] = {
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    val problemFiles = ParseSpec.problems
+
+    val gameExecutions = GameExecution.loadFile(strategy, problemFiles(problem), tag, None, None, phrasesOfPower)
+
+    val futures = Future.sequence(gameExecutions.map(_.run))
+
+    val results = Await.ready(futures, Int.MaxValue seconds).value.get
+
+    val allOutputs = (results match {
+      case Success(t) => t
+      case Failure(e) => throw e
+    })
+
+    allOutputs.foreach(println(_))
+
+    allOutputs
+  }
+
   def outputsOfAllProblemsForStrategy(strategy: Strategy, tag: Option[String]): Seq[Output] = {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val problemFiles = ParseSpec.problems
-
-    val phrasesOfPower = Set("Ei!")
 
     val gameExecutions = problemFiles.flatMap {
       GameExecution.loadFile(strategy, _, tag, None, None, phrasesOfPower)
