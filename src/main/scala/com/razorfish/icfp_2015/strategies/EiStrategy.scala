@@ -1,7 +1,7 @@
 package com.razorfish.icfp_2015.strategies
 
 import com.razorfish.icfp_2015.MoveEncoder.PowerWord
-import com.razorfish.icfp_2015.{MoveEncoder, EncodedMoves}
+import com.razorfish.icfp_2015.{PowerPhrase, MoveEncoder, EncodedMoves}
 import com.razorfish.icfp_2015.models._
 
 import scalaz.Scalaz._
@@ -44,17 +44,10 @@ class EiStrategy extends Strategy {
         case CW => "d"
         case CCW => "k"
       }.toArray)
-      val powerWordScore = phraseOfPowerScore("ei!", "ei!".r.findAllMatchIn(solution).length)
+      val powerWordScore = PowerPhrase.phraseOfPowerScore("ei!", "ei!".r.findAllMatchIn(solution).length)
       EncodedMoves(solution, powerWordScore)
     }
 
-    def phraseOfPowerScore(phraseOfPower: String, occurances: Int) = {
-      val lenp = phraseOfPower.length
-      val repsp = occurances
-      val power_bonusp = if (occurances > 0) 300 else 0
-
-      2 * lenp * repsp + power_bonusp
-    }
   }
 
 }

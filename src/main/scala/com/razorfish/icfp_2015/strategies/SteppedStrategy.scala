@@ -1,6 +1,6 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.{EncodedMoves, MoveEncoder}
+import com.razorfish.icfp_2015.{PowerPhrase, EncodedMoves, MoveEncoder}
 import com.razorfish.icfp_2015.models._
 import scalaz.Scalaz.unfold
 
@@ -26,5 +26,24 @@ trait SteppedStrategy[State] extends Strategy {
         None
     }.map(_._1)
     moveEncoder.encode(moves, phrases)
+  }
+}
+
+trait SteppedEncodedStrategy[State] extends Strategy {
+  def initialState: State
+
+  def step(gc: ActiveGameConfiguration, state: State, phrases: Set[String]): (Char, State)
+
+  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
+    val initialConfiguration = GameConfiguration(board, source)
+    val moves = unfold((initialState, initialConfiguration)) {
+      case (state, gc@ActiveGameConfiguration(_, _, _, _, _)) =>
+        val (move, newState) = step(gc, state, phrases)
+        val newGC = gc.update(MoveEncoder.decodeMove(move))
+        Option((move, newGC), (newState, newGC))
+      case (_, gc@CompletedGameConfiguration(_, _)) =>
+        None
+    }.map(_._1)
+    EncodedMoves(moves, PowerPhrase.scoreMoves(moves.mkString, phrases))
   }
 }

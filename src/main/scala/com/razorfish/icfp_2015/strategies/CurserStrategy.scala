@@ -7,10 +7,10 @@ import com.razorfish.icfp_2015.models.{ActiveGameConfiguration, GameMove, Source
  * For each piece tries to find the longest sequence of moves (before frozen) using only sequences of power phrases
  */
 
-/*
-class CurserStrategy(encoder: MoveEncoder) extends SteppedEncodedStrategy[Seq[GameMove]] {
 
-  def initialState = Seq.empty[GameMove]
+class CurserStrategy(encoder: MoveEncoder) extends SteppedEncodedStrategy[Seq[Char]] {
+
+  def initialState = Seq.empty[Char]
 
   val decodeMove: Map[Char, GameMove] = {
     MoveEncoder.moveEncodings.flatMap {
@@ -30,9 +30,21 @@ class CurserStrategy(encoder: MoveEncoder) extends SteppedEncodedStrategy[Seq[Ga
     }.toMap
   }
 
-  override def step(gc: ActiveGameConfiguration, state: Seq[GameMove]): (Char, Seq[GameMove]) = {
+  override def step(gc: ActiveGameConfiguration, state: Seq[Char], phrases: Set[String]): (Char, Seq[Char]) = {
+    state match {
+      case move +: moves =>
+        (move, moves)
+      case Seq() =>
+        val unitMoves = solveForUnit(gc, phrases)
+        step(gc, unitMoves, phrases)
+    }
+  }
+
+  def solveForUnit(gc: ActiveGameConfiguration, phrases: Set[String]): Seq[Char] = {
+    val phrasePaths = phrases.map { phrase =>
+      phrase.map(MoveEncoder.decodeMove)
+    }
+    ??? // WIP
 
   }
 }
-
-*/
