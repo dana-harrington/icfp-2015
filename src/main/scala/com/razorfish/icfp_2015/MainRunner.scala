@@ -17,11 +17,11 @@ case class Config(inputFiles: Seq[File] = Seq.empty,
                   timeLimit: Option[Int] = None,
                   cores: Option[Int] = None)
 
-object Main extends Main(phrases => PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases))
+object Main extends MainRunner(phrases => PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases))
 
-object CurserMain extends Main(new CurserStrategy(_))
+object CurserMain extends MainRunner(new CurserStrategy(_))
 
-class Main(strategyBuilder: StrategyBuilder) {
+class MainRunner(strategyBuilder: StrategyBuilder) {
   val argsParser = new scopt.OptionParser[Config]("ifcp_2015") {
     opt[File]('f', "file") required() unbounded() valueName "<file>" action { (x, c) =>
       c.copy(inputFiles = c.inputFiles :+ x) } text "-f is a required file property"
