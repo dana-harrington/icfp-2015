@@ -4,12 +4,10 @@ import com.razorfish.icfp_2015.MoveEncoder.PowerWord
 import com.razorfish.icfp_2015.{Score, MoveEncoder}
 import com.razorfish.icfp_2015.models.{CompletedGameConfiguration, GameMove, ActiveGameConfiguration}
 
-case class TrialState(moves: Int, score: Option[Int])
+
 
 case class BruteForceUnitAtATimeStrategy( moveEncoder: MoveEncoder,
-                       phrases: Set[PowerWord]) extends SteppedStrategy[Seq[GameMove]] {
-
-  // TODO: Makes no attempt to avoid repeated states
+                                          phrases: Set[PowerWord]) extends SteppedStrategy[Seq[GameMove]] {
 
   def initialState = Seq.empty[GameMove]
 
@@ -26,7 +24,11 @@ case class BruteForceUnitAtATimeStrategy( moveEncoder: MoveEncoder,
 
   // Find the highest scoring sequence of moves for a unit by brute force
   def solveForCurrentUnit(gc: ActiveGameConfiguration): (List[GameMove], Score) = {
-    val bestPathAndScore = Path.allPaths(gc).map { path =>
+    val bestPathAndScore =
+      Path
+        .allPaths(gc)
+        .filterNot(path => gc.activeUnit.containsCycle(path.moves))
+        .map { path =>
       (path, Path.scorePath(path, moveEncoder, phrases))
     }.maxBy(_._2)
     (bestPathAndScore._1.moves, bestPathAndScore._2)

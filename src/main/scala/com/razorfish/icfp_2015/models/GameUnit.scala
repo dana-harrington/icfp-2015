@@ -31,6 +31,15 @@ case class GameUnit(members: Set[Cell], pivot: Cell, history: Seq[GameMove]) {
     else None
   }
 
+  def containsCycle(moves: Seq[GameMove]): Boolean = {
+    val configurations = moves.foldRight(this, this :: Nil) {
+      case (m, (gu, configs)) =>
+        val nextConfig = gu.move(m)
+        (nextConfig, nextConfig :: configs)
+    }._2
+    configurations.toSet.size != configurations.size
+  }
+
   def canRotate(rotation: Rotation): Boolean = {
     //TODO: do we check history?
     this.members == this.move(rotation).members
