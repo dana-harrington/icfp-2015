@@ -10,7 +10,7 @@ import scala.util.Random
  */
 
 
-class CurserStrategy(encoder: MoveEncoder, val phrases: Set[PowerPhrase]) extends SteppedEncodedStrategy[Seq[Char]] {
+class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrategy[Seq[Char]] {
 
   def initialState = Seq.empty[Char]
 
