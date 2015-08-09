@@ -52,10 +52,11 @@ object InLineEncoder extends MoveEncoder {
         (encoded.dropRight(acc._2.index+1) ++ replacement, NodeState(newStateIndex,newPhrases))
       }
     }
-    val score = powerPhrases.map { phrase =>
-      phrase.foldLeft("")(_+_).r.findAllIn(result._1).length
-    }
-    EncodedMoves(result._1.foldLeft("")(_+_), score.sum)
+    val finalPhraseScore = powerPhrases.map { phrase =>
+      val count = phrase.foldLeft("")(_+_).r.findAllIn(result._1).length
+      2 * phrase.length * count + (if (count > 0) 300 else 0)
+    }.sum
+    EncodedMoves(result._1.foldLeft("")(_+_), finalPhraseScore)
   }
 
   def stateForMoves(moves: Seq[GameMove], powerPhrases: Seq[PowerMove]): Seq[PowerMove] = {
