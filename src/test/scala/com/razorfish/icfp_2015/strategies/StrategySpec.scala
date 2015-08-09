@@ -6,7 +6,7 @@ import org.specs2.matcher.MatchResult
 import org.specs2.mutable.Specification
 
 import com.razorfish.icfp_2015._
-import com.razorfish.icfp_2015.json.{Output, Parse}
+import com.razorfish.icfp_2015.json.{ParseSpec, Output, Parse}
 import com.razorfish.icfp_2015.models._
 import scala.concurrent.duration._
 
@@ -65,7 +65,7 @@ trait StrategySpec extends Specification {
     gameMoves.size === moveCount
   }
 
-  def spec(file: File, strategy: StrategyBuilder, config: Config,phrases: Set[PowerPhrase], expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
+  def spec(file: File, strategy: StrategyBuilder, config: Config, phrases: Set[PowerPhrase], expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
     val parse = Parse(file)
     val seed = parse.sourceSeeds.head
     val gameExecution = new GameExecution(strategy, parse, seed, None, config.timeLimit, config.memoryLimit, config.powerPhrases)
@@ -98,8 +98,6 @@ eemimimeeeemimimiiiipmeemimimiimiimimmimeeemimimmippipmmiim
 emimmipimeeeemimmeemimiippimeeeeemimimmmimmmeeeemimimiiipim
 miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
 
-  val submittedSolution0 = Output(0, 0, None, "ei! ei! ei! ei! ei! ei! ei! ei! ei! ei!ei! ei! ei! ei! ei! ei! ei! ei! ei! ei")
-
   "strategySpec" should {
     "process the entire ICFP supplied solution" in {
 
@@ -111,6 +109,8 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
     }
 
     "process our submitted solution" in {
+      val submittedSolution0 = Output(0, 0, None, "ei! ei! ei! ei! ei! ei! ei! ei! ei! ei!ei! ei! ei! ei! ei! ei! ei! ei! ei! ei")
+
       val file = new File("src/test/resources/problems/problem_0.json")
       val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
       val expectedScore = Some(431L)
@@ -129,15 +129,42 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
 
       specOutput(submittedSolution0, Parse(file), 0, expectedScore, false, MoveEncoder.phrasesOfPower)
     }
-    /*
-        "process our submitted solution" in {
-          val file = new File("src/test/resources/problems/problem_0.json")
-          val config = Config(Seq(file), Set("Ei!"), None, None)
-          val expectedScore = None //TODO: calculate correct score Some(431L)
+  }
+  "scoring" should {
+    "score iestrategy" in {
+      val solution = Output(15, 0, None, "ei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!ei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!ei!lei!lei!lei!lei!lei!lei!ei!lei!")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 560
+      specOutput(solution, Parse(file), 0, Some(expectedScore), false, MoveEncoder.phrasesOfPower)
+    }
 
-          specOutput("r'lyeh", Parse(file), 0, expectedScore, false)
-        }
-        */
+    "score pop iestrategy" in {
+      val solution = Output(15, 0, None, "ei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!l")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 552
+      specOutput(solution, Parse(file), 0, Some(expectedScore), false, MoveEncoder.phrasesOfPower)
+    }
+
+    "score pop #1" in {
+      val solution = Output(15, 0, None, "ia! ia!lia! ia!lia! ia!lia! ia!lia! ia!l")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 390
+      specOutput(solution, Parse(file), 0, Some(expectedScore), false, MoveEncoder.phrasesOfPower)
+    }
+
+    "score pop #3" in {
+      val solution = Output(15, 0, None, "yuggothyuggothyuggothyuggothyuggothyuggothyuggothyuggothyuggothyuggothyuggothyuggothyuggothb")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 506
+      specOutput(solution, Parse(file), 0, Some(expectedScore), false, MoveEncoder.phrasesOfPower)
+    }
+
+    "score pop #4" in {
+      val solution = Output(15, 0, None, "ei!r'lyehr'lyehr'lyehr'lyehr'lyehr'lyehdplbbbapr'lyehr'lyehr'lyehr'lyehr'lyehei!r'lyehr'lyehr'lyehr'lyehpr'lyehr'lyehdplbapppppppei!ppppppppppppppp")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 858
+      specOutput(solution, Parse(file), 0, Some(expectedScore), false, MoveEncoder.phrasesOfPower)
+    }
   }
 
 }

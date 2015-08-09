@@ -5,7 +5,7 @@ object PowerPhrase {
     phrases.foldRight(0) {
       case (phrase, score) =>
         val occurrences = phrase.r.findAllMatchIn(moves).length
-        phraseOfPowerScore(phrase, occurrences)
+        score + phraseOfPowerScore(phrase, occurrences)
     }
   }
 
