@@ -3,7 +3,7 @@ package com.razorfish.icfp_2015.strategies
 import java.io.File
 
 import com.razorfish.icfp_2015.json.{Output, Parse}
-import com.razorfish.icfp_2015.{MoveEncoder, Config, Submit}
+import com.razorfish.icfp_2015._
 
 class EiStrategySpec extends StrategySpec {
 
@@ -25,7 +25,7 @@ class EiStrategySpec extends StrategySpec {
 
     val file = new File("src/test/resources/problems/problem_1.json")
     val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
-    def eiStrategy(phrases: Set[String]) = new EiStrategy(phrases)
+    def eiStrategy(phrases: Set[PowerPhrase]) = new EiStrategy(phrases)
     spec(file, eiStrategy, config, None, true)
   }
 

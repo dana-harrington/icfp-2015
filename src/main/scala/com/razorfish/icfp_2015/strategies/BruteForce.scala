@@ -1,13 +1,12 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.MoveEncoder.PowerWord
-import com.razorfish.icfp_2015.{Score, MoveEncoder}
-import com.razorfish.icfp_2015.models.{CompletedGameConfiguration, GameMove, ActiveGameConfiguration}
+import com.razorfish.icfp_2015._
+import com.razorfish.icfp_2015.models.{GameMove, ActiveGameConfiguration}
 
 
 
 case class BruteForceUnitAtATimeStrategy( moveEncoder: MoveEncoder,
-                                          phrases: Set[PowerWord]) extends SteppedStrategy[Seq[GameMove]] {
+                                          phrases: Set[PowerPhrase]) extends SteppedStrategy[Seq[GameMove]] {
 
   def initialState = Seq.empty[GameMove]
 

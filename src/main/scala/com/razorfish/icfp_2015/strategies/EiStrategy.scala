@@ -1,12 +1,11 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.MoveEncoder.PowerWord
 import com.razorfish.icfp_2015.{PowerPhrase, MoveEncoder, EncodedMoves}
 import com.razorfish.icfp_2015.models._
 
 import scalaz.Scalaz._
 
-class EiStrategy(val phrases: Set[String]) extends Strategy {
+class EiStrategy(val phrases: Set[PowerPhrase]) extends Strategy {
   def initialState = ()
 
   // "Ei! " => E, SW, W, SE
@@ -35,7 +34,7 @@ class EiStrategy(val phrases: Set[String]) extends Strategy {
   }
 
   private object SimpleMoveEncoder extends MoveEncoder {
-    def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
+    def encode(moves: Seq[GameMove], powerWords: Set[PowerPhrase]): EncodedMoves = {
       val solution: String = String.copyValueOf(moves.flatMap {
         case W => "!"
         case SW => "i"

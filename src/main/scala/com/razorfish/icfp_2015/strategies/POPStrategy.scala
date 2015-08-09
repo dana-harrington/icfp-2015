@@ -1,12 +1,11 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.MoveEncoder.PowerWord
 import com.razorfish.icfp_2015.models._
-import com.razorfish.icfp_2015.{EncodedMoves, MoveEncoder}
+import com.razorfish.icfp_2015._
 
 import scalaz.Scalaz._
 
-class POPStrategy(val phrases: Set[PowerWord]) extends Strategy {
+class POPStrategy(val phrases: Set[PowerPhrase]) extends Strategy {
   def initialState = ()
 
   // "Ei!" => E, SW, W
@@ -41,7 +40,7 @@ class POPStrategy(val phrases: Set[PowerWord]) extends Strategy {
   }
 
   private object SimpleMoveEncoder extends MoveEncoder {
-    def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
+    def encode(moves: Seq[GameMove], powerWords: Set[PowerPhrase]): EncodedMoves = {
       val solution: String = String.copyValueOf(moves.flatMap {
         case W => "!"
         case SW => "i"
@@ -54,7 +53,7 @@ class POPStrategy(val phrases: Set[PowerWord]) extends Strategy {
       EncodedMoves(solution, powerWordScore)
     }
 
-    def phraseOfPowerScore(phraseOfPower: String, occurances: Int) = {
+    def phraseOfPowerScore(phraseOfPower: PowerPhrase, occurances: Int) = {
       val lenp = phraseOfPower.length
       val repsp = occurances
       val power_bonusp = if (occurances > 0) 300 else 0

@@ -76,7 +76,7 @@ object Submit {
     allOutputs
   }
 
-  def outputsOfAllProblemsForStrategy(strategy: Set[String] => Strategy, tag: Option[String]): Seq[Output] = {
+  def outputsOfAllProblemsForStrategy(strategy: Set[PowerPhrase] => Strategy, tag: Option[String]): Seq[Output] = {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 

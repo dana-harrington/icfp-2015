@@ -32,7 +32,7 @@ object Path {
     }
   }
 
-  def scorePath(path: Path, moveEncoder: MoveEncoder, phrases: Set[String]): Score = {
+  def scorePath(path: Path, moveEncoder: MoveEncoder, phrases: Set[PowerPhrase]): Score = {
     moveEncoder.encode(path.moves, phrases).powerWordScore
   }
 

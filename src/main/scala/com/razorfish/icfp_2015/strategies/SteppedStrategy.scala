@@ -32,8 +32,6 @@ trait SteppedStrategy[State] extends Strategy {
 trait SteppedEncodedStrategy[State] extends Strategy {
   def initialState: State
 
-  def phrases: Set[String]
-
   def step(gc: ActiveGameConfiguration, state: State): (Char, State)
 
   def apply(board: Board, source: Source): EncodedMoves = {

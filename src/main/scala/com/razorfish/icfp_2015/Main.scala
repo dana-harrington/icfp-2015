@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 case class Config(inputFiles: Seq[File] = Seq.empty,
-                  powerPhrases: Set[String] = Set.empty,
+                  powerPhrases: Set[PowerPhrase] = Set.empty,
                   memoryLimit: Option[Int] = None,
                   timeLimit: Option[Int] = None,
                   cores: Option[Int] = None)
@@ -42,7 +42,7 @@ object Main {
       // TODO: handle time limit (dump out any problems that are completed near end of limit)
 
       val gameExecutions = config.inputFiles.flatMap {
-        def strategy(phrases: Set[String]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
+        def strategy(phrases: Set[PowerPhrase]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
         GameExecution.loadFile(strategy, _, None, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
       }
 

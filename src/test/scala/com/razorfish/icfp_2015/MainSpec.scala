@@ -31,7 +31,7 @@ class MainSpec extends Specification {
       skipped
 
       val tag = Submit.generateTag("EiStrategy")
-      def strategy(phrases: Set[String]) = new EiStrategy(phrases)
+      def strategy(phrases: Set[PowerPhrase]) = new EiStrategy(phrases)
       val outputs = Submit.outputsOfAllProblemsForStrategy(strategy, tag)
 
       outputs.forall(_.tag == tag) === true
