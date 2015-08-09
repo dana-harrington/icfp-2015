@@ -44,7 +44,7 @@ class MainSpec extends Specification {
 
     "submitAll" in {
 
-      //skipped
+      skipped
 
       //val tag = Submit.generateTag("EiStrategy")
       //def strategy(phrases: Set[String]) = new EiStrategy(phrases)
