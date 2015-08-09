@@ -36,7 +36,7 @@ trait StrategySpec extends Specification {
       println(s"Game with ${gameMoves.size} moves")
       println(s"[${output.solution}]")
       println("Starting position:")
-      gameConfiguration.board.print(gameConfiguration.activeUnit)
+      gameConfiguration.board.print(gameConfiguration.activeUnit.unit)
     }
 
     var moveCount = 0
@@ -51,7 +51,7 @@ trait StrategySpec extends Specification {
           moveCount += 1
           if (isDebug) {
             println(s"Move #$moveCount: ${move}")
-            gameConfiguration.board.print(gameConfiguration.activeUnit)
+            gameConfiguration.board.print(gameConfiguration.activeUnit.unit)
           }
         case _ => if (isDebug) println("Move after game end")
       }
@@ -112,6 +112,17 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       val file = new File("src/test/resources/problems/problem_0.json")
       val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
       val expectedScore = None //TODO: calculate correct score Some(431L)
+      val input = Parse(file)
+      val startGC = GameConfiguration(
+        input.board,
+        new UnitSource(input.sourceSeeds.head, input.gameUnits, input.sourceLength))
+        .asInstanceOf[ActiveGameConfiguration]
+      val moves = MoveEncoder.decodeMoves(icfpValidOutput.solution)
+      val result = moves.foldRight[GameConfiguration](startGC) {
+        case (move, gc) =>
+          gc.asInstanceOf[ActiveGameConfiguration].update(move)
+      }
+      result.score === 431
 
       specOutput(submittedSolution0, Parse(file), 0, expectedScore, false)
     }

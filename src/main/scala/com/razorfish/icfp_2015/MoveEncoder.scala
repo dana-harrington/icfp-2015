@@ -115,4 +115,10 @@ object MoveEncoder {
         encodings.map(_.toLower -> move) ++ encodings.map(_.toUpper -> move)
     }
   }
+
+  def decodeMoves(moves: Seq[Char]): Seq[GameMove] = {
+    moves.flatMap { em =>
+      decodeMove.get(em)
+    }
+  }
 }
