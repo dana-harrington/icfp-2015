@@ -3,7 +3,7 @@ package com.razorfish.icfp_2015.models
 // see http://www.redblobgames.com/grids/hexagons/
 private case class CubeCoord(x: Int, y: Int, z: Int) {
   def cell: Cell = {
-    val col = x + (z - (z&1)) / 2
+    val col = x + (z - (z & 1)) / 2
     val row = z
     Cell(col, row)
   }
@@ -14,11 +14,11 @@ private case class CubeCoord(x: Int, y: Int, z: Int) {
   }
 
   def -(cc: CubeCoord): CubeCoord = {
-    CubeCoord(x-cc.x, y-cc.y, z-cc.z)
+    CubeCoord(x - cc.x, y - cc.y, z - cc.z)
   }
-  
-  def +(cc: CubeCoord): CubeCoord  = {
-    CubeCoord(x+cc.x, y+cc.y, z+cc.z)
+
+  def +(cc: CubeCoord): CubeCoord = {
+    CubeCoord(x + cc.x, y + cc.y, z + cc.z)
   }
 }
 
@@ -28,8 +28,14 @@ case class Cell(column: Int, row: Int) {
     m match {
       case W => this.copy(column = column - 1)
       case E => this.copy(column = column + 1)
-      case SW => Cell(column = column - 1, row = row + 1)
-      case SE => Cell(column = column - 1, row = row + 1)
+      case SW => {
+        if (row % 2 == 0) Cell(column = column - 1, row = row + 1)
+        else Cell(column, row = row + 1)
+      }
+      case SE => {
+        if (row % 2 == 0) Cell(column = column + 1, row = row + 1)
+        else Cell(column, row = row + 1)
+      }
     }
   }
 
@@ -37,7 +43,7 @@ case class Cell(column: Int, row: Int) {
     val x = column - (row - (row & 1)) / 2
     val z = row
     val y = -x - z
-    CubeCoord(x,y,z)
+    CubeCoord(x, y, z)
   }
 
   def rotate(r: Rotation, pivot: Cell): Cell = {

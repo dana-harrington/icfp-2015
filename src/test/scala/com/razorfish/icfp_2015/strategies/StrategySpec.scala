@@ -25,10 +25,10 @@ trait StrategySpec extends Specification {
     solution.toCharArray.flatMap(getMove(_)).toSeq
   }
 
-  def spec(file: File, strategy: Strategy, config: Config): MatchResult[Boolean] = {
+  def spec(file: File, strategy: Strategy, config: Config): MatchResult[_] = {
     val parse = Parse(file)
     val seed = parse.sourceSeeds.head
-    val gameExecution = new GameExecution(strategy, parse, seed, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
+    val gameExecution = new GameExecution(strategy, parse, seed, config.timeLimit, config.memoryLimit, config.powerPhrases)
     val output = Await.result(gameExecution.run, 20 seconds)
     val gameMoves = solutionToGameMoves(output.solution)
     val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
@@ -36,17 +36,29 @@ trait StrategySpec extends Specification {
     var gameConfiguration = GameConfiguration(parse.board, source).asInstanceOf[ActiveGameConfiguration]
     var gameDone = false
 
+    println(s"Game with ${gameMoves.size} moves")
+    println(output.solution)
+    println("Starting position:")
+    gameConfiguration.board.print(gameConfiguration.activeUnit)
+
+    var moveCount = 0
     for (move <- gameMoves) {
 
-      println(move)
-      gameConfiguration.board.print(gameConfiguration.activeUnit)
-
       gameConfiguration.update(move) match {
-        case _: CompletedGameConfiguration => gameDone = true
-        case gc: ActiveGameConfiguration => gameConfiguration = gc
+        case _: CompletedGameConfiguration =>
+          moveCount += 1
+          println(s"Move #$moveCount: ${move}: Game over")
+          gameDone = true
+        case gc: ActiveGameConfiguration if !gameDone => gameConfiguration = gc
+          moveCount += 1
+          println(s"Move #$moveCount: ${move}")
+          gameConfiguration.board.print(gameConfiguration.activeUnit)
+        case _ => println("Move after game end")
       }
+
     }
 
     gameDone === true
+    gameMoves.size === moveCount
   }
 }

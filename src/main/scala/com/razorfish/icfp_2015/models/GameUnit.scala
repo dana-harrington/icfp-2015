@@ -16,15 +16,14 @@ case class GameUnit(members: Set[Cell], pivot: Cell) {
     val activeUnitColumns = members.seq.map(_.column)
     val left = activeUnitColumns.min
     val right = activeUnitColumns.max
-    val top = members.seq.map(_.row).min
 
     val movesToRight = ((board.width - 1 - (right - left)) / 2) - left
-    val movesToTop = top
+    val movesToTop = members.seq.map(_.row).min
 
     val newMembers = members.map {
-      case Cell(x, y) => Cell(x + movesToRight, y - top)
+      case Cell(x, y) => Cell(x + movesToRight, y - movesToTop)
     }
-    val newPivot = Cell(pivot.column + movesToRight, pivot.row - top)
+    val newPivot = Cell(pivot.column + movesToRight, pivot.row - movesToTop)
 
     val horizontallyCenteredGameUnit = GameUnit(newMembers, newPivot)
 

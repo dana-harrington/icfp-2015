@@ -97,6 +97,10 @@ object GameConfiguration {
    * @return initial configuration with given board and unit source
    */
   def apply(board: Board, source: Source): GameConfiguration = {
-    ActiveGameConfiguration(board, source.next(), source, 0, 0)
+    source.next().center(board).fold[GameConfiguration]{
+      CompletedGameConfiguration(board, 0)
+    } { startUnit =>
+      ActiveGameConfiguration(board, startUnit, source, 0, 0)
+    }
   }
 }
