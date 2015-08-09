@@ -30,6 +30,15 @@ case class GameUnit(members: Set[Cell], pivot: Cell) {
     if (horizontallyCenteredGameUnit.members.map(board.tileState).forall(_ == EmptyTile)) Some(horizontallyCenteredGameUnit)
     else None
   }
+
+  def containsCycle(moves: Seq[GameMove]): Boolean = {
+    val configurations = moves.foldRight(this, this :: Nil) {
+      case (m, (gu, configs)) =>
+        val nextConfig = gu.move(m)
+        (nextConfig, nextConfig :: configs)
+    }._2
+    configurations.toSet.size != configurations.size
+  }
 }
 
 object NilGameUnit extends GameUnit(Set.empty, NilCell) {

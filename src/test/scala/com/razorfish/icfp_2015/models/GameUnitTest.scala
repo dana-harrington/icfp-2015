@@ -67,4 +67,25 @@ class GameUnitTest extends Specification {
       gu.center(board) must beNone
     }
   }
+
+  "Testing for cycles" should {
+    val gu = GameUnit(
+      members = Set(
+        Cell(1, 1),
+        Cell(3, 1)),
+      pivot = Cell(2, 1))
+
+    "pass an empty sequence" in {
+      gu.containsCycle(Seq.empty) must beFalse
+    }
+
+    "fail a simple cycle" in {
+      gu.containsCycle(Seq(W,E)) must beTrue
+    }
+
+    "fail a rotation cycle" in {
+      gu.containsCycle(Seq(CW, CW, CW, CW, CW, CW, E, W)) must beTrue
+    }
+
+  }
 }
