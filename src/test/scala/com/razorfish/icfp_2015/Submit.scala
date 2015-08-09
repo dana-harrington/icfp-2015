@@ -14,8 +14,6 @@ import scala.util.{Failure, Success, Try}
 
 object Submit {
 
-  val phrasesOfPower = Set("ei!")
-
   val apiToken = "ttrd/Lf4+K4MgNvfhXTSqTaz0GxROvdJw5wzOo+78Lc="
   val teamId = 294
 
@@ -62,7 +60,7 @@ object Submit {
 
     val problemFiles = ParseSpec.problems
 
-    val gameExecutions = GameExecution.loadFile(strategy, problemFiles(problem), tag, None, None, phrasesOfPower)
+    val gameExecutions = GameExecution.loadFile(strategy, problemFiles(problem), tag, None, None, MoveEncoder.phrasesOfPower)
 
     val futures = Future.sequence(gameExecutions.map(_.run))
 
@@ -85,7 +83,7 @@ object Submit {
     val problemFiles = ParseSpec.problems
 
     val gameExecutions = problemFiles.flatMap {
-      GameExecution.loadFile(strategy, _, tag, None, None, phrasesOfPower)
+      GameExecution.loadFile(strategy, _, tag, None, None, MoveEncoder.phrasesOfPower)
     }
 
     val futures = Future.sequence(gameExecutions.map(_.run))

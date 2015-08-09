@@ -102,7 +102,7 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
     "process the entire ICFP supplied solution" in {
 
       val file = new File("src/test/resources/problems/problem_6.json")
-      val config = Config(Seq(file), Submit.phrasesOfPower, None, None)
+      val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
       val expectedScore = Some(3261L)
 
       specOutput(icfpValidOutput, Parse(file), 0, expectedScore, false)
@@ -110,7 +110,7 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
 
     "process our submitted solution" in {
       val file = new File("src/test/resources/problems/problem_0.json")
-      val config = Config(Seq(file), Submit.phrasesOfPower, None, None)
+      val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
       val expectedScore = None //TODO: calculate correct score Some(431L)
 
       specOutput(submittedSolution0, Parse(file), 0, expectedScore, false)

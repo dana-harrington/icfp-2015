@@ -14,6 +14,7 @@ class POPStrategy extends Strategy {
   // "R'lyeh" => CW, W, SE, E, E, SW
   // "Yuggoth" => E, CCW, SW, SW, SE, CCW, SW
 
+  // These problems have 0 score:
   // 1, 8, 9, 10, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24
 
   def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
@@ -36,11 +37,11 @@ class POPStrategy extends Strategy {
       case (_, gc@CompletedGameConfiguration(_, _)) =>
         None
     }.map(_._1)
-    SimpleMoveEncoder.encode(moves, phrases.toSeq.map(_.toVector))
+    SimpleMoveEncoder.encode(moves, phrases)
   }
 
   private object SimpleMoveEncoder extends MoveEncoder {
-    def encode(moves: Seq[GameMove], powerWords: Seq[PowerWord]): EncodedMoves = {
+    def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
       val solution: String = String.copyValueOf(moves.flatMap {
         case W => "!"
         case SW => "i"
