@@ -11,7 +11,7 @@ sealed trait MatchState
 case class NodeState(count: Int, powerWords: Seq[PowerWord]) extends MatchState
 
 trait MoveEncoder {
-  def encode(moves: Seq[GameMove], powerWords: Seq[PowerWord]): EncodedMoves
+  def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves
 }
 
 object InLineEncoder extends MoveEncoder {
@@ -27,9 +27,11 @@ object InLineEncoder extends MoveEncoder {
     EncodedMoves(simpleCode, 0L)
   }
 
-  def encode(moves: Seq[GameMove], powerWords: Seq[PowerWord]): EncodedMoves = {
+  def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
 
-    val result = moves.foldLeft(("", NodeState(0,powerWords))) { (acc, move) =>
+    val powerWordsSeq = powerWords.toSeq
+
+    val result = moves.foldLeft(("", NodeState(0,powerWordsSeq))) { (acc, move) =>
 
       val head = getMoveCodeHead(move)
 
@@ -44,13 +46,13 @@ object InLineEncoder extends MoveEncoder {
 
       val nextMatchState = NodeState(
         count = if (rematched.nonEmpty) acc._2.count + 1 else 0,
-        powerWords = if (rematched.nonEmpty) rematched else powerWords
+        powerWords = if (rematched.nonEmpty) rematched else powerWordsSeq
       )
 
       val nextRound = (encoded, nextMatchState)
 
       choosePowerWord(nextMatchState).fold(nextRound){ powerWord =>
-        (encoded.dropRight(powerWord.length) + powerWord.foldRight("")(_+_), NodeState(0,powerWords))
+        (encoded.dropRight(powerWord.length) + powerWord.foldRight("")(_+_), NodeState(0,powerWordsSeq))
       }
     }
     EncodedMoves(result._1, 0L)
@@ -69,7 +71,7 @@ object InLineEncoder extends MoveEncoder {
 }
 
 object DumbEncoder extends MoveEncoder {
-  def encode(moves: Seq[GameMove],  powerWords: Seq[PowerWord] = Seq()): EncodedMoves = {
+  def encode(moves: Seq[GameMove],  powerWords: Set[PowerWord] = Set.empty): EncodedMoves = {
     val encodedMoves = moves.map{ move =>
       MoveEncoder.moveEncodings(move).head
     }
@@ -79,7 +81,7 @@ object DumbEncoder extends MoveEncoder {
 
 object MoveEncoder {
 
-  type PowerWord = Vector[Char]
+  type PowerWord = String
 
   lazy val commandCode: Map[GameMove, Vector[Char]] = Map(
     W -> "p'!.03".toVector,

@@ -22,11 +22,18 @@ case class BruteForce( evaluator: TrialState => Double,
   }
 
   def solveForCurrentUnit(): List[GameMove] = ???
+
+
 }
 
 case class Path(moves: List[GameMove], score: Score)
 
 object Path {
+  /**
+   * All paths that end is a frozen piece
+   * @param gc
+   * @return
+   */
   def allPaths(gc: ActiveGameConfiguration): Set[Path] = {
     for {
       move <- GameMove.moves
@@ -46,4 +53,9 @@ object Path {
       Path(move :: path.moves, path.score)
     }
   }
+
+  def scorePath(path: Path, moveEncoder: MoveEncoder, phrases: Set[String]): Score = {
+    moveEncoder.encode(path.moves, phrases).powerWordScore
+  }
+
 }
