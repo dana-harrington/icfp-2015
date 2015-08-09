@@ -26,7 +26,7 @@ case class BruteForceUnitAtATimeStrategy( moveEncoder: MoveEncoder,
     val bestPathAndScore =
       Path
         .allPaths(gc)
-        .filterNot(path => gc.activeUnit.containsCycle(path.moves))
+        .filterNot(path => gc.activeUnit.unit.containsCycle(path.moves))
         .map { path =>
       (path, Path.scorePath(path, moveEncoder, phrases))
     }.maxBy(_._2)

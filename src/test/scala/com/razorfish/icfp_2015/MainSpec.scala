@@ -27,12 +27,12 @@ class MainSpec extends Specification {
 
     "submitAll" in {
 
-      skipped
+      //skipped
 
       //val tag = Submit.generateTag("EiStrategy")
       //def strategy(phrases: Set[String]) = new EiStrategy(phrases)
 
-      val tag = Submit.generateTag("Cursor")
+      val tag = Submit.generateTag("Curser")
       def strategy(phrases: Set[PowerPhrase]) = new CurserStrategy(phrases)
 
       val outputs = Submit.outputsOfAllProblemsForStrategy(strategy, tag)

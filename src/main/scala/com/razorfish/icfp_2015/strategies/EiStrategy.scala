@@ -14,10 +14,10 @@ class EiStrategy(val phrases: Set[PowerPhrase]) extends Strategy {
     val initialConfiguration = GameConfiguration(board, source)
     var move: GameMove = SE
     val moves = unfold((initialState, initialConfiguration)) {
-      case (state, gc@ActiveGameConfiguration(_, _, _, _, _)) =>
+      case (state, gc: ActiveGameConfiguration) =>
 
         move = move match {
-          case W => if (gc.activeUnit.history.isEmpty) E else SE
+          case W => if (gc.activeUnit.moveHistory.isEmpty) E else SE
           case SE => E
           case E => SW
           case SW => W

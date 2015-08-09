@@ -8,24 +8,45 @@ sealed trait GameConfiguration {
 }
 
 case class CompletedGameConfiguration(board: Board, score: Score) extends GameConfiguration
+case class ActiveUnit(unit: GameUnit, positionHistory: Set[GameUnit] = Set.empty, moveHistory: Seq[GameMove] = Seq.empty)
+
+
+sealed trait MoveResult {
+  def toOption: Option[GameUnit]
+}
+case class MoveSuccess(unit: GameUnit) extends MoveResult {
+  val toOption = Some(unit)
+}
+case object UnitFrozen extends MoveResult {
+  val toOption = None
+}
+case object GameDisqualification extends MoveResult {
+  val toOption = None
+}
+
+case class DisqualificationException(gc: ActiveGameConfiguration)
+  extends Exception(s"Disqualified, unit move history ${gc.activeUnit.moveHistory}")
 
 case class ActiveGameConfiguration( board: Board,
-                                  activeUnit: GameUnit,
+                                  activeUnit: ActiveUnit,
                                   source: Iterator[GameUnit],
                                   score: Score,
                                   linesClearedWithPreviousUnit: Int) extends GameConfiguration {
+
 
   /**
    *
    * @param move
    * @return if unit can move as requested the new state, otherwise None
    */
-  def tryMove(move: GameMove): Option[GameUnit] = {
-    val updatedActiveUnit = activeUnit.move(move)
-    if (updatedActiveUnit.members.forall(cell => board.tileState(cell) == EmptyTile)) {
-      Some(updatedActiveUnit)
+  def tryMove(move: GameMove): MoveResult = {
+    val updatedActiveUnit = activeUnit.unit.move(move)
+    if (activeUnit.positionHistory contains updatedActiveUnit) {
+      GameDisqualification
+    } else if (updatedActiveUnit.members.forall(cell => board.tileState(cell) == EmptyTile)) {
+      MoveSuccess(updatedActiveUnit)
     } else {
-      None
+      UnitFrozen
     }
   }
 
@@ -34,15 +55,18 @@ case class ActiveGameConfiguration( board: Board,
       case Seq() =>
         Some(this)
       case move +: moreMoves =>
-        if (tryMove(move).isDefined) {
-          update(move) match {
-            case ac: ActiveGameConfiguration =>
-              ac.tryMoves(moreMoves)
-            case cg: CompletedGameConfiguration =>
-              None
-          }
-        } else {
-          None
+        tryMove(move) match {
+          case MoveSuccess(_) =>
+            update(move) match {
+              case ac: ActiveGameConfiguration =>
+                ac.tryMoves(moreMoves)
+              case cg: CompletedGameConfiguration =>
+                None
+            }
+          case UnitFrozen =>
+            None
+          case GameDisqualification =>
+            None
         }
     }
 
@@ -55,8 +79,17 @@ case class ActiveGameConfiguration( board: Board,
    */
   def update(move: GameMove): GameConfiguration = {
     tryMove(move) match {
-      case Some(updatedUnit) => this.copy(activeUnit = updatedUnit)
-      case None => freeze
+      case MoveSuccess(updatedUnit) if activeUnit.positionHistory contains updatedUnit =>
+        throw new Exception(s"Unit repeated position in ${activeUnit.moveHistory}")
+      case MoveSuccess(updatedUnit) =>
+        this.copy(activeUnit = ActiveUnit(
+          unit = updatedUnit,
+          positionHistory = activeUnit.positionHistory + updatedUnit,
+          moveHistory = activeUnit.moveHistory :+ move))
+      case UnitFrozen =>
+        freeze()
+      case GameDisqualification =>
+        throw new DisqualificationException(this)
     }
   }
 
@@ -67,8 +100,8 @@ case class ActiveGameConfiguration( board: Board,
   case class FreezeResult(score: Score, linesCleared: Int, board: Board)
 
   def freezeResult: FreezeResult = {
-    val (linesCleared, newBoard) = board.freeze(activeUnit).filledRows
-    val points = activeUnit.members.size + 100 * (1 + linesCleared) * linesCleared / 2
+    val (linesCleared, newBoard) = board.freeze(activeUnit.unit).filledRows
+    val points = activeUnit.unit.members.size + 100 * (1 + linesCleared) * linesCleared / 2
     val lineBonus =
       if (linesClearedWithPreviousUnit > 0) {
         Math.floor((linesClearedWithPreviousUnit - 1) * points / 10).toInt
@@ -89,20 +122,20 @@ case class ActiveGameConfiguration( board: Board,
       newActiveUnit.fold[GameConfiguration] {
 
         //Can't place new unit
-        CompletedGameConfiguration(board.freeze(activeUnit), score + freezeState.score)
+        CompletedGameConfiguration(board.freeze(activeUnit.unit), score + freezeState.score)
 
       }{ activeUnit =>
 
         ActiveGameConfiguration(
           board = freezeState.board,
-          activeUnit,
+          activeUnit = ActiveUnit(activeUnit),
           source,
           score + freezeState.score,
           freezeState.linesCleared
         )
       }
     } else {
-      CompletedGameConfiguration(board.freeze(activeUnit), score + freezeState.score)
+      CompletedGameConfiguration(board.freeze(activeUnit.unit), score + freezeState.score)
     }
   }
 
@@ -119,7 +152,7 @@ object GameConfiguration {
     source.next().center(board).fold[GameConfiguration]{
       CompletedGameConfiguration(board, 0)
     } { startUnit =>
-      ActiveGameConfiguration(board, startUnit, source, 0, 0)
+      ActiveGameConfiguration(board, ActiveUnit(startUnit), source, 0, 0)
     }
   }
 }

@@ -49,7 +49,7 @@ class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrate
     }
     val usablePhrases = for {
       (phrase, phrasePath) <- phrasePaths
-      if !gc.activeUnit.containsCycle(phrasePath)
+      if !gc.activeUnit.unit.containsCycle(phrasePath)
       if gc.tryMoves(phrasePath).isDefined // Does not freeze piece (or end game)
     } yield {
       phrase

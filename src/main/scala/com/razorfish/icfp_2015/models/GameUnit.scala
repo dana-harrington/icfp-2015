@@ -1,6 +1,6 @@
 package com.razorfish.icfp_2015.models
 
-case class GameUnit(members: Set[Cell], pivot: Cell, history: Seq[GameMove]) {
+case class GameUnit(members: Set[Cell], pivot: Cell) {
 
   def tileState(p: Cell): TileState =
     if (members.contains(p)) FilledTile
@@ -9,7 +9,7 @@ case class GameUnit(members: Set[Cell], pivot: Cell, history: Seq[GameMove]) {
   def move(move: GameMove): GameUnit = {
     val newMembers = members.map(_.move(move, pivot))
     val newPivot = pivot.move(move, pivot)
-    GameUnit(newMembers, newPivot, history :+ move)
+    GameUnit(newMembers, newPivot)
   }
 
   def center(board: Board): Option[GameUnit] = {
@@ -25,7 +25,7 @@ case class GameUnit(members: Set[Cell], pivot: Cell, history: Seq[GameMove]) {
     }
     val newPivot = Cell(pivot.column + movesToRight, pivot.row - movesToTop)
 
-    val horizontallyCenteredGameUnit = GameUnit(newMembers, newPivot, Nil)
+    val horizontallyCenteredGameUnit = GameUnit(newMembers, newPivot)
 
     if (horizontallyCenteredGameUnit.members.map(board.tileState).forall(_ == EmptyTile)) Some(horizontallyCenteredGameUnit)
     else None
@@ -46,7 +46,7 @@ case class GameUnit(members: Set[Cell], pivot: Cell, history: Seq[GameMove]) {
   }
 }
 
-object NilGameUnit extends GameUnit(Set.empty, NilCell, Nil) {
+object NilGameUnit extends GameUnit(Set.empty, NilCell) {
 
   override def tileState(p: Cell): TileState = EmptyTile
 

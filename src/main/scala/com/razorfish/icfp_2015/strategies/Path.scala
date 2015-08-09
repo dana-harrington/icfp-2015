@@ -15,7 +15,7 @@ object Path {
   def allPaths(gc: ActiveGameConfiguration): Set[Path] = {
     for {
       move <- GameMove.moves
-      path <- gc.tryMove(move) match {
+      path <- gc.tryMove(move).toOption match {
         case None =>
           val score = gc.freezeResult.score
           Set(Path(List(move), gc.freezeResult.score))

@@ -9,8 +9,7 @@ class GameUnitTest extends Specification {
       members = Set(
         Cell(1, 1),
         Cell(3, 1)),
-      pivot = Cell(2, 1),
-      history = Nil)
+      pivot = Cell(2, 1))
 
     "move W" in {
       val expected = GameUnit(
@@ -18,8 +17,7 @@ class GameUnitTest extends Specification {
           Cell(0, 1),
           Cell(2, 1)
         ),
-        pivot = Cell(1, 1),
-        Seq(W)
+        pivot = Cell(1, 1)
       )
       gu.move(W) === expected
     }
@@ -31,16 +29,14 @@ class GameUnitTest extends Specification {
       members = Set(
         Cell(1, 1),
         Cell(3, 1)),
-      pivot = Cell(2, 1),
-      history = Nil)
+      pivot = Cell(2, 1))
 
     val gu2 = GameUnit(
       members = Set(
         Cell(1, 1),
         Cell(3, 1),
         Cell(0, 2)),
-      pivot = Cell(2, 1),
-      history = Nil)
+      pivot = Cell(2, 1))
 
     "place valid unit - even" in {
       val board = Board(10, 10, Set.empty)
@@ -77,8 +73,7 @@ class GameUnitTest extends Specification {
       members = Set(
         Cell(1, 1),
         Cell(3, 1)),
-      pivot = Cell(2, 1),
-      history = Nil)
+      pivot = Cell(2, 1))
 
     "pass an empty sequence" in {
       gu.containsCycle(Seq.empty) must beFalse
