@@ -85,7 +85,7 @@ case class ActiveGameConfiguration( board: Board,
     val freezeState = freezeResult
     if (source.hasNext) {
 
-      val newActiveUnit = source.next().center(freezeResult.board)
+      val newActiveUnit = source.next().center(freezeState.board)
       newActiveUnit.fold[GameConfiguration] {
 
         //Can't place new unit
