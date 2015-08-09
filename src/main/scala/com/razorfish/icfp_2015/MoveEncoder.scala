@@ -81,7 +81,7 @@ object DumbEncoder extends MoveEncoder {
 
 object MoveEncoder {
 
-  val phrasesOfPower = Set("ei!")
+  val phrasesOfPower = Set("ei!", "yuggoth")
 
   type PowerWord = String
 
