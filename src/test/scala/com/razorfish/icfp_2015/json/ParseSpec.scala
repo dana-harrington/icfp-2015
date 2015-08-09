@@ -1,11 +1,16 @@
 package com.razorfish.icfp_2015.json
 
-import org.specs2.mutable._
 import java.io.File
 
-import com.razorfish.icfp_2015.models.{NilGameUnit, ActiveGameConfiguration, Board}
+import com.razorfish.icfp_2015.models.{ActiveGameConfiguration, NilGameUnit}
+
+object ParseSpec {
+  val problems = (0 to 24).map(i => new File(s"src/test/resources/problems/problem_$i.json"))
+}
 
 class ParseSpec extends org.specs2.mutable.Specification {
+
+  import ParseSpec.problems
 
   "problem_0" should {
     val file = new File("src/test/resources/problems/problem_0.json")
@@ -41,8 +46,6 @@ class ParseSpec extends org.specs2.mutable.Specification {
     }
     */
   }
-
-  val problems = (0 to 24).map(i => new File(s"src/test/resources/problems/problem_$i.json"))
 
   "all problems" in {
 

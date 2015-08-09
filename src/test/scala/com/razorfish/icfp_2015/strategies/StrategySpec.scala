@@ -34,7 +34,7 @@ trait StrategySpec extends Specification {
 
     if (isDebug) {
       println(s"Game with ${gameMoves.size} moves")
-      println(output.solution)
+      println(s"[${output.solution}]")
       println("Starting position:")
       gameConfiguration.board.print(gameConfiguration.activeUnit)
     }
@@ -45,7 +45,7 @@ trait StrategySpec extends Specification {
       gameConfiguration.update(move) match {
         case cgc: CompletedGameConfiguration =>
           moveCount += 1
-          if (isDebug) println(s"Move #$moveCount: ${move}: Game over")
+          if (isDebug) println(s"Move #$moveCount: ${move}: Game over   Score: ${cgc.score}")
           completedGame = Some(cgc)
         case gc: ActiveGameConfiguration if completedGame.isEmpty => gameConfiguration = gc
           moveCount += 1
@@ -59,14 +59,14 @@ trait StrategySpec extends Specification {
     }
 
     completedGame.isDefined === true
-    if (expectedScore.isDefined) completedGame.map(_.score) === expectedScore
+    if (expectedScore.isDefined) completedGame.get.score === expectedScore.get
     gameMoves.size === moveCount
   }
 
   def spec(file: File, strategy: Strategy, config: Config, expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
     val parse = Parse(file)
     val seed = parse.sourceSeeds.head
-    val gameExecution = new GameExecution(strategy, parse, seed, config.timeLimit, config.memoryLimit, config.powerPhrases)
+    val gameExecution = new GameExecution(strategy, parse, seed, None, config.timeLimit, config.memoryLimit, config.powerPhrases)
     val output = Await.result(gameExecution.run, 20 seconds)
     specOutput(output, parse, seed, expectedScore, isDebug)
   }
@@ -96,8 +96,11 @@ eemimimeeeemimimiiiipmeemimimiimiimimmimeeemimimmippipmmiim
 emimmipimeeeemimmeemimiippimeeeeemimimmmimmmeeeemimimiiipim
 miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
 
+  val submittedSolution0 = Output(0, 0, None, """
+ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei! ei""")
+
   "strategySpec" should {
-    "process the entire supplied solution" in {
+    "process the entire ICFP supplied solution" in {
 
       val file = new File("src/test/resources/problems/problem_6.json")
       val config = Config(Seq(file), Set("Ei!"), None, None)
@@ -106,7 +109,13 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       specOutput(icfpValidOutput, Parse(file), 0, expectedScore, false)
     }
 
+    "process our submitted solution" in {
+      val file = new File("src/test/resources/problems/problem_0.json")
+      val config = Config(Seq(file), Set("Ei!"), None, None)
+      val expectedScore = None //TODO: calculate correct score Some(431L)
 
+      specOutput(submittedSolution0, Parse(file), 0, expectedScore, false)
+    }
   }
 
 }

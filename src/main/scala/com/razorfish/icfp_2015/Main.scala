@@ -2,11 +2,10 @@ package com.razorfish.icfp_2015
 
 import java.io.File
 
-import com.razorfish.icfp_2015.models.UnitSource
-import com.razorfish.icfp_2015.strategies.{Strategy, PhraseAfterthoughtStrategy, ReallyStupidAI}
+import com.razorfish.icfp_2015.strategies.{PhraseAfterthoughtStrategy, ReallyStupidAI}
 import play.api.libs.json._
 
-import com.razorfish.icfp_2015.json.{Parse, Output}
+import com.razorfish.icfp_2015.json.Output
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success}
 import scala.concurrent.duration._
@@ -44,7 +43,7 @@ object Main {
 
       val gameExecutions = config.inputFiles.flatMap {
         val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
-        GameExecution.loadFile(strategy, _, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
+        GameExecution.loadFile(strategy, _, None, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
       }
 
       val futures = Future.sequence(gameExecutions.map(_.run))
@@ -61,35 +60,3 @@ object Main {
   }
 
 }
-
-class GameExecution(strategy: Strategy,
-                    parse: Parse,
-                    seed: Long,
-                    timelimitSec: Option[Int],
-                    memoryLimitMB: Option[Int],
-                    phrasesOfPower: Set[String]) {
-
-  val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
-  
-  def run: Future[Output] = Future {
-    val gameplay = strategy(parse.board, source, phrasesOfPower)
-    Output(parse.problemId, seed, None, gameplay.moves.mkString)
-  }
-}
-
-object GameExecution {
-
-  def loadFile(strategy: Strategy,
-               file: File,
-               timelimitSec: Option[Int],
-               memoryLimitMB: Option[Int],
-               phrasesOfPower: Set[String]): Seq[GameExecution] = {
-
-    val parse = Parse(file)
-
-    parse.sourceSeeds.map {
-      new GameExecution(strategy, parse, _, timelimitSec, memoryLimitMB, phrasesOfPower)
-    }
-  }
-}
-
