@@ -112,7 +112,7 @@ object MoveEncoder {
   val decodeMove: Map[Char, GameMove] = {
     MoveEncoder.moveEncodings.flatMap {
       case (move, encodings) =>
-        encodings.map(_ -> move)
+        encodings.map(_.toLower -> move) ++ encodings.map(_.toUpper -> move)
     }
   }
 }
