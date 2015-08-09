@@ -18,7 +18,7 @@ object Submit {
   val teamId = 294
 
   def generateTag(strategyName: String): Option[String] =
-    Some(strategyName + "-" + (new Date).toString)
+    Some(strategyName + " - " + (new Date).toString)
 
   def submit(output: Seq[Output]): Try[Unit] = {
 
