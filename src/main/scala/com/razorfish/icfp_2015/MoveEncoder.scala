@@ -117,7 +117,7 @@ object MoveEncoder {
     E ->
       Set('b','c','e','f','y'),
     CW ->
-      Set('d','q','r','v','z','l'),
+      Set('d','q','r','v','z','1'),
     CCW ->
       Set('k','s','t','u','w','x')
   )
