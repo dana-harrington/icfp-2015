@@ -10,7 +10,7 @@ class CurserStrategySpec extends StrategySpec {
 
    "problem_0 simulation" in {
 
-     skipped
+     //skipped
 
      val file = new File("src/test/resources/problems/problem_1.json")
      val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)

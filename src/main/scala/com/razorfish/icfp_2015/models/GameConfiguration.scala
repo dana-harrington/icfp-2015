@@ -8,7 +8,12 @@ sealed trait GameConfiguration {
 }
 
 case class CompletedGameConfiguration(board: Board, score: Score) extends GameConfiguration
-case class ActiveUnit(unit: GameUnit, positionHistory: Set[GameUnit] = Set.empty, moveHistory: Seq[GameMove] = Seq.empty)
+case class ActiveUnit(unit: GameUnit, positionHistory: Set[GameUnit], moveHistory: Seq[GameMove])
+object ActiveUnit {
+  def apply(unit: GameUnit): ActiveUnit = {
+    ActiveUnit(unit, Set(unit), Seq.empty)
+  }
+}
 
 
 sealed trait MoveResult {
