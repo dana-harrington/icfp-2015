@@ -6,7 +6,7 @@ import com.razorfish.icfp_2015.{EncodedMoves, MoveEncoder}
 
 import scalaz.Scalaz._
 
-class POPStrategy extends Strategy {
+class POPStrategy(val phrases: Set[PowerWord]) extends Strategy {
   def initialState = ()
 
   // "Ei!" => E, SW, W
@@ -17,7 +17,7 @@ class POPStrategy extends Strategy {
   // These problems have 0 score:
   // 1, 8, 9, 10, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24
 
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
+  def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     var move: GameMove = SE
     val moves = unfold((initialState, initialConfiguration)) {

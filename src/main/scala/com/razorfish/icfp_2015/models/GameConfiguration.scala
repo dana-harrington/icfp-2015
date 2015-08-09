@@ -29,6 +29,25 @@ case class ActiveGameConfiguration( board: Board,
     }
   }
 
+  def tryMoves(moves: Seq[GameMove]): Option[ActiveGameConfiguration] = {
+    moves match {
+      case Seq() =>
+        Some(this)
+      case move +: moreMoves =>
+        if (tryMove(move).isDefined) {
+          update(move) match {
+            case ac: ActiveGameConfiguration =>
+              ac.tryMoves(moreMoves)
+            case cg: CompletedGameConfiguration =>
+              None
+          }
+        } else {
+          None
+        }
+    }
+
+  }
+
   /**
    *
    * @param move

@@ -8,7 +8,7 @@ import com.razorfish.icfp_2015.models.ActiveGameConfiguration
  * @param ai
  * @param moveEncoder
  */
-case class PhraseAfterthoughtStrategy(ai: MoveAI, moveEncoder: MoveEncoder) extends SteppedStrategy[Unit] {
+case class PhraseAfterthoughtStrategy(ai: MoveAI, moveEncoder: MoveEncoder, phrases: Set[String]) extends SteppedStrategy[Unit] {
   def initialState = ()
   def step(gc: ActiveGameConfiguration, state: Unit) = {
     (ai.step(gc), ())

@@ -5,7 +5,7 @@ import java.io.File
 import com.razorfish.icfp_2015.{MoveEncoder, Submit, Config, DumbEncoder}
 
 class PhraseAfterthoughtStrategySpec extends StrategySpec {
-  val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
+  def strategy(phrases: Set[String]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
 
   "problem_18 simulation" in {
     skipped

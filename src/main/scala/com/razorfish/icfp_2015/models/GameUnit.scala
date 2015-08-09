@@ -32,10 +32,10 @@ case class GameUnit(members: Set[Cell], pivot: Cell, history: Seq[GameMove]) {
   }
 
   def containsCycle(moves: Seq[GameMove]): Boolean = {
-    val configurations = moves.foldRight(this, this :: Nil) {
+    val configurations = moves.foldRight(this, this.members :: Nil) {
       case (m, (gu, configs)) =>
         val nextConfig = gu.move(m)
-        (nextConfig, nextConfig :: configs)
+        (nextConfig, nextConfig.members :: configs)
     }._2
     configurations.toSet.size != configurations.size
   }

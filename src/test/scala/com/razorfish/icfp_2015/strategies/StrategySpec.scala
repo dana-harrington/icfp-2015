@@ -63,7 +63,7 @@ trait StrategySpec extends Specification {
     gameMoves.size === moveCount
   }
 
-  def spec(file: File, strategy: Strategy, config: Config, expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
+  def spec(file: File, strategy: StrategyBuilder, config: Config, expectedScore: Option[Score] = None, isDebug: Boolean = true): MatchResult[_] = {
     val parse = Parse(file)
     val seed = parse.sourceSeeds.head
     val gameExecution = new GameExecution(strategy, parse, seed, None, config.timeLimit, config.memoryLimit, config.powerPhrases)

@@ -6,12 +6,12 @@ import com.razorfish.icfp_2015.models._
 
 import scalaz.Scalaz._
 
-class EiStrategy extends Strategy {
+class EiStrategy(val phrases: Set[String]) extends Strategy {
   def initialState = ()
 
   // "Ei! " => E, SW, W, SE
 
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves = {
+  def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     var move: GameMove = SE
     val moves = unfold((initialState, initialConfiguration)) {

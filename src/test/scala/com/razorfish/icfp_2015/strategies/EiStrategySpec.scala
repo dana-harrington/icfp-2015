@@ -25,7 +25,8 @@ class EiStrategySpec extends StrategySpec {
 
     val file = new File("src/test/resources/problems/problem_1.json")
     val config = Config(Seq(file), MoveEncoder.phrasesOfPower, None, None)
-    spec(file, new EiStrategy, config, None, true)
+    def eiStrategy(phrases: Set[String]) = new EiStrategy(phrases)
+    spec(file, eiStrategy, config, None, true)
   }
 
 }
