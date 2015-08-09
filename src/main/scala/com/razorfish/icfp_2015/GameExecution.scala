@@ -2,14 +2,15 @@ package com.razorfish.icfp_2015
 
 import java.io.File
 
+import com.razorfish.icfp_2015.MoveEncoder.PowerWord
 import com.razorfish.icfp_2015.json.{Output, Parse}
 import com.razorfish.icfp_2015.models.UnitSource
-import com.razorfish.icfp_2015.strategies.Strategy
+import com.razorfish.icfp_2015.strategies.{StrategyBuilder, Strategy}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class GameExecution(strategy: Strategy,
+class GameExecution(strategy: StrategyBuilder,
                     parse: Parse,
                     seed: Long,
                     tag: Option[String],
@@ -20,14 +21,14 @@ class GameExecution(strategy: Strategy,
   val source = new UnitSource(seed, parse.gameUnits, parse.sourceLength)
 
   def run: Future[Output] = Future {
-    val gameplay = strategy(parse.board, source, phrasesOfPower)
+    val gameplay = strategy(phrasesOfPower)(parse.board, source)
     Output(parse.problemId, seed, tag, gameplay.moves.mkString)
   }
 }
 
 object GameExecution {
 
-  def loadFile(strategy: Strategy,
+  def loadFile(strategy: StrategyBuilder,
                file: File,
                tag: Option[String],
                timelimitSec: Option[Int],

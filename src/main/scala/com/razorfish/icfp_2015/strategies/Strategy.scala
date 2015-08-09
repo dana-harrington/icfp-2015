@@ -4,7 +4,8 @@ import com.razorfish.icfp_2015.EncodedMoves
 import com.razorfish.icfp_2015.models._
 
 trait Strategy {
-  def apply(board: Board, source: Source, phrases: Set[String]): EncodedMoves
+  def phrases: Set[String]
+  def apply(board: Board, source: Source): EncodedMoves
 }
 
 

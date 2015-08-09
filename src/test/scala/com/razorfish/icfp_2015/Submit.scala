@@ -6,7 +6,7 @@ import play.api.libs.json.Json
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.razorfish.icfp_2015.json.{Parse, Output, ParseSpec}
-import com.razorfish.icfp_2015.strategies.Strategy
+import com.razorfish.icfp_2015.strategies.{StrategyBuilder, Strategy}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -55,7 +55,7 @@ object Submit {
     }
   }
 
-  def outputOfProblemForStrategy(strategy: Strategy, tag: Option[String], problem: Int): Seq[Output] = {
+  def outputOfProblemForStrategy(strategy: StrategyBuilder, tag: Option[String], problem: Int): Seq[Output] = {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val problemFiles = ParseSpec.problems
@@ -76,7 +76,7 @@ object Submit {
     allOutputs
   }
 
-  def outputsOfAllProblemsForStrategy(strategy: Strategy, tag: Option[String]): Seq[Output] = {
+  def outputsOfAllProblemsForStrategy(strategy: Set[String] => Strategy, tag: Option[String]): Seq[Output] = {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 

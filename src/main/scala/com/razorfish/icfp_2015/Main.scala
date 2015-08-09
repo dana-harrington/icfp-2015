@@ -42,7 +42,7 @@ object Main {
       // TODO: handle time limit (dump out any problems that are completed near end of limit)
 
       val gameExecutions = config.inputFiles.flatMap {
-        val strategy = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder)
+        def strategy(phrases: Set[String]) = PhraseAfterthoughtStrategy(ReallyStupidAI, DumbEncoder, phrases)
         GameExecution.loadFile(strategy, _, None, config.timeLimit, config.memoryLimit, config.powerPhrases.toSet)
       }
 
