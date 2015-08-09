@@ -8,11 +8,17 @@ class MoveEncoderSpec  extends Specification {
   "encode moves" in {
 
     val moves = Seq(
-      E, SW, W, //"Ei!" -> (E,SW,W)
+      SW, E, CW, SW, E, SW, CW, SW, E, CW, SW,  //"abracadabra"
+      SW, E, CW, SW, E, SW, CW, SW, E, CW, SW,  //"abracadabra"
+      E, SW, W,                                 //"Ei!" -> (E,SW,W)
+      E, SW, W,                                 //"Ei!" -> (E,SW,W)
+      E, SW, W,                                 //"Ei!" -> (E,SW,W)
+      E, SW, W,                                 //"Ei!" -> (E,SW,W)
       SW, E, CW, SW, E, SW, CW, SW, E, CW, SW,  //"abracadabra" -> (SW,E,CW,SW,E,SW,CW,SW,E,CW,SW)
       W, SE,
       W, W,
       SW, E, CW, SW, E, SW, CW, SW, E, CW, SW,  //"abracadabra"
+      SW, E, CW, SW, E, SW, CW, SW, E, CW, SW,
       W, W,
       SW, SE, SW, SW, SE, SE, E,                //"Johanne" -> (SW,SE,SW,SW,SE,SE,E)
       E, SW, W, SW, E, SW, CW, SW, E, CW, SW    //"ei!acadabra"
@@ -21,6 +27,6 @@ class MoveEncoderSpec  extends Specification {
     val powerWords = Set("ei!", "Johanne", "abracadabra", "ei!acadabra")
 
     val encoded = InLineEncoder.encode(moves, powerWords)
-    encoded.moves === "ei!abracadabraplppabracadabrappJohanneei!acadabra".toSeq
+    encoded.moves === "abracadabraabracadabraei!ei!ei!ei!abracadabraplppabracadabraabracadabrappJohanneei!acadabra".toSeq
   }
 }

@@ -8,7 +8,7 @@ case class EncodedMoves(moves: Seq[Char], powerWordScore: Score)
 
 sealed trait MatchState
 
-case class NodeState(count: Int, powerWords: Seq[PowerPhrase]) extends MatchState
+case class NodeState(index: Int, powerWords: Seq[PowerPhrase]) extends MatchState
 
 trait MoveEncoder {
   def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves
@@ -23,39 +23,56 @@ object InLineEncoder extends MoveEncoder {
 
   def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
     val powerPhrases = powerWords.toSeq.map(_.toVector)
-    val result = moves.foldLeft[(Vector[Char],NodeState)]((Vector(), NodeState(0,powerPhrases))) { (acc, move) =>
+    val result = moves.zipWithIndex.foldLeft[(Vector[Char], NodeState)]((Vector(), NodeState(0,powerPhrases))) { case (acc, (move, i)) =>
       val moveVector = movesCode(move)
       val encoded = acc._1 :+ movesCode(move).head
-      val matches = partialMatches(moveVector, acc._2.count, acc._2.powerWords)
+      println(encoded.foldRight("")(_+_))
+      val matches = partialMatches(moveVector, acc._2.index, acc._2.powerWords)
       val rematched = {
         if (matches.nonEmpty) matches
         else partialMatches(moveVector, 0, acc._2.powerWords)
       }
       val matchState = NodeState(
-          count = if (rematched.nonEmpty) acc._2.count + 1 else 0,
+          index = if (rematched.nonEmpty) acc._2.index + 1 else 0,
           powerWords = if (rematched.nonEmpty) rematched else powerPhrases
         )
       val nextRound = (encoded, matchState)
+
       choosePowerWord(matchState).fold(nextRound){ powerWord =>
-        val replaceable = encoded.takeRight(acc._2.count+1)
-        val replacement = powerWord ++ replaceable.drop(powerWord.length)
-        (encoded.dropRight(acc._2.count+1) ++ replacement, NodeState(0,powerPhrases))
+        val possibleReplace = encoded.takeRight(acc._2.index+1)
+        val willReplace = possibleReplace.drop(powerWord.length)
+        val replacement = powerWord ++ willReplace
+        val missedPhrases = if (willReplace.nonEmpty) {
+          val missedMoves = moves.slice(1+i-willReplace.length,1+i)
+          stateForMoves(missedMoves, powerPhrases)
+        } else Seq()
+        val newPhrases = if (missedPhrases.nonEmpty) missedPhrases else powerPhrases
+        val newStateIndex = if (missedPhrases.nonEmpty) willReplace.length else 0
+        (encoded.dropRight(acc._2.index+1) ++ replacement, NodeState(newStateIndex,newPhrases))
       }
     }
     EncodedMoves(result._1.foldLeft("")(_+_), 0L)
   }
 
-  def partialMatches(moveVect: Vector[Char], position: Int, powerWords: Seq[PowerPhrase]): Seq[PowerPhrase] = {
-    val longPowerWords = powerWords.filter(_.length > position).filter { word =>
-      moveVect contains word(position).toLower
+  def stateForMoves(moves: Seq[GameMove], powerPhrases: Seq[PowerPhrase]): Seq[PowerPhrase] = {
+    moves.zipWithIndex.foldLeft[Seq[PowerPhrase]](powerPhrases){ case (acc, (move, i)) =>
+      val moveVector = movesCode(move)
+      partialMatches(moveVector ,i, acc)
     }
-    val shortPowerWords = powerWords.filter(_.length <= position)
+  }
+
+
+  def partialMatches(moveVect: Vector[Char], index: Int, powerPhrases: Seq[PowerPhrase]): Seq[PowerPhrase] = {
+    val longPowerWords = powerPhrases.filter(_.length > index).filter { word =>
+      moveVect contains word(index).toLower
+    }
+    val shortPowerWords = powerPhrases.filter(_.length <= index)
     longPowerWords ++ shortPowerWords
   }
 
   def choosePowerWord(state: NodeState): Option[PowerPhrase] = {
     state.powerWords.find { word =>
-      val foundWord = word.length <= state.count && state.powerWords.forall(_.length <= word.length)
+      val foundWord = word.length <= state.index && state.powerWords.forall(_.length <= word.length)
       if(foundWord) println(state.powerWords + "\n\n")
       foundWord
     }
