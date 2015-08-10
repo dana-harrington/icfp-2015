@@ -3,7 +3,7 @@ package com.razorfish.icfp_2015
 import org.specs2.mutable.Specification
 
 import com.razorfish.icfp_2015.json.Output
-import com.razorfish.icfp_2015.strategies.{CurserStrategy, EiStrategy}
+import com.razorfish.icfp_2015.strategies.{POPBranchStrategy, CurserStrategy, EiStrategy}
 
 class MainSpec extends Specification {
 
@@ -12,8 +12,8 @@ class MainSpec extends Specification {
 
       skipped
 
-      val generated = "ei!ei!yuggothnei!ei!ei!nei!ei!nei!44".dropRight(10)
-      val output = Output(8, 0, Submit.generateTag("debug curser"), generated)
+      val generated = "yuggothyuggothyuggothyuggothlyuggothyuggothyuggothei!lyuggothyuggothr'lyehlei!llei!lyuggothyuggothr'lyehlei!lyuggothyuggothei!lyuggothlyuggothlyuggothlei!llllll"
+      val output = Output(15, 0, Submit.generateTag("pop branch #2"), generated)
 
       Submit.submit(Seq(output)).isSuccess === true
     }
@@ -42,8 +42,11 @@ class MainSpec extends Specification {
       //val tag = Submit.generateTag("EiStrategy")
       //def strategy(phrases: Set[String]) = new EiStrategy(phrases)
 
-      val tag = Submit.generateTag("Curser")
-      def strategy(phrases: Set[PowerPhrase]) = new CurserStrategy(phrases)
+      //val tag = Submit.generateTag("Curser")
+      //def strategy(phrases: Set[PowerPhrase]) = new CurserStrategy(phrases)
+
+      val tag = Submit.generateTag("POPBranch")
+      def strategy(phrases: Set[PowerPhrase]) = new POPBranchStrategy(phrases, InLineEncoder)
 
       val outputs = Submit.outputsOfAllProblemsForStrategy(strategy, tag)
 

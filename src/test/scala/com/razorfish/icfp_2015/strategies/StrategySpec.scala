@@ -162,6 +162,21 @@ miipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm""")
       val expectedScore = 858
       specOutput(solution, Parse(file), 0, Some(expectedScore), false, MoveEncoder.phrasesOfPower)
     }
+
+    "score pop branch #1" in {
+      val solution = Output(15, 0, None, "ei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!lei!llllei!lei!lei!lei!lei!lei!lei!lllei!lei!lei!lei!lei!lei!llei!lei!lei!lei!lei!lei!lei!lei!llllei!lei!lei!lllei!lei!llei!llllll")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 602
+      specOutput(solution, Parse(file), 0, None /*Some(expectedScore)*/, false, MoveEncoder.phrasesOfPower)
+    }
+
+    "score pop branch #1" in {
+      val solution = Output(15, 0, None, "yuggothyuggothyuggothyuggothlyuggothyuggothyuggothei!lyuggothyuggothr'lyehlei!llei!lyuggothyuggothr'lyehlei!lyuggothyuggothei!lyuggothlyuggothlyuggothlei!llllll")
+      val file = ParseSpec.problems(solution.problemId)
+      val expectedScore = 1224
+      specOutput(solution, Parse(file), 0, None /*Some(expectedScore)*/, false, MoveEncoder.phrasesOfPower)
+    }
+
   }
 
 }

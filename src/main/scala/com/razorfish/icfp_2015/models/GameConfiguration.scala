@@ -29,8 +29,8 @@ case object GameDisqualification extends MoveResult {
   val toOption = None
 }
 
-case class DisqualificationException(gc: ActiveGameConfiguration)
-  extends Exception(s"Disqualified, unit move history ${gc.activeUnit.moveHistory}")
+case class DisqualificationException(gc: ActiveGameConfiguration, gameMove: GameMove)
+  extends Exception(s"Disqualified, unit move history ${gc.activeUnit.moveHistory} by move $gameMove")
 
 case class ActiveGameConfiguration( board: Board,
                                   activeUnit: ActiveUnit,
@@ -94,7 +94,7 @@ case class ActiveGameConfiguration( board: Board,
       case UnitFrozen =>
         freeze()
       case GameDisqualification =>
-        throw new DisqualificationException(this)
+        throw new DisqualificationException(this, move)
     }
   }
 
