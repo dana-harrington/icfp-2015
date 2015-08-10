@@ -6,15 +6,14 @@ import com.razorfish.icfp_2015.models._
 import scalaz.Scalaz._
 
 class EiStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends Strategy {
-  def initialState = ()
 
   // "Ei! " => E, SW, W, SE
 
   def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     var move: GameMove = SE
-    val moves = unfold((initialState, initialConfiguration)) {
-      case (state, gc: ActiveGameConfiguration) =>
+    val moves = unfold(initialConfiguration) {
+      case gc: ActiveGameConfiguration =>
 
         move = move match {
           case W => if (gc.activeUnit.moveHistory.isEmpty) E else SE
@@ -26,8 +25,8 @@ class EiStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends St
 
         val newGC = gc.update(move)
 
-        Option((move, newGC), (initialState, newGC))
-      case (_, gc@CompletedGameConfiguration(_, _)) =>
+        Option((move, newGC), newGC)
+      case gc@CompletedGameConfiguration(_, _) =>
         None
     }.map(_._1)
     encoder.encode(moves, phrases)

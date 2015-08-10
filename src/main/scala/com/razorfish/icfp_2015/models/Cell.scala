@@ -28,14 +28,12 @@ case class Cell(column: Int, row: Int) {
     m match {
       case W => this.copy(column = column - 1)
       case E => this.copy(column = column + 1)
-      case SW => {
+      case SW =>
         if (row % 2 == 0) Cell(column = column - 1, row = row + 1)
         else Cell(column, row = row + 1)
-      }
-      case SE => {
+      case SE =>
         if (row % 2 == 0) Cell(column, row = row + 1)
         else Cell(column = column + 1, row = row + 1)
-      }
     }
   }
 

@@ -14,8 +14,8 @@ import scala.concurrent.Await
 
 trait StrategySpec extends Specification {
 
-  def getMove(char: Char): Option[GameMove] = {
-    val c = char.toLower
+  def getMove(move: EncodedMove): Option[GameMove] = {
+    val c = move.toLower
     MoveEncoder.moveEncodings.mapValues(_.contains(c)).filter {
       case (k, v) => v
     }.headOption.map(_._1)

@@ -6,7 +6,6 @@ import com.razorfish.icfp_2015._
 import scalaz.Scalaz._
 
 class POPStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends Strategy {
-  def initialState = ()
 
   // "Ei!" => E, SW, W
   // "Ia! Ia! " => SW, SW, W, SE, SW, SW, W
@@ -20,19 +19,19 @@ class POPStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends S
 
   var phraseIndex = 0
 
-  def incrementIndex = {
+  def incrementIndex() = {
     phraseIndex = (phraseIndex + 1) % phrase.length
   }
 
   def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)
     var move: GameMove = E
-    val moves = unfold((initialState, initialConfiguration)) {
-      case (state, gc: ActiveGameConfiguration) =>
+    val moves = unfold(initialConfiguration) {
+      case gc: ActiveGameConfiguration =>
 
         if (gc.activeUnit.moveHistory.isEmpty) {
           //select best
-          allowedGameMovePhrases = gameMovePhrases.filterNot(gc.activeUnit.unit.containsCycle(_))
+          allowedGameMovePhrases = gameMovePhrases.filterNot(gc.activeUnit.unit.containsCycle)
           phrase = allowedGameMovePhrases
             .filterNot(m => gc.tryMoves(m).isEmpty)
             .headOption.getOrElse(Seq(move))
@@ -51,9 +50,9 @@ class POPStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends S
           move = newMove
         }
         val newGC = gc.update(move)
-
-        Option((move, newGC), (incrementIndex, newGC))
-      case (_, gc@CompletedGameConfiguration(_, _)) =>
+        incrementIndex()
+        Option((move, newGC), newGC)
+      case gc@CompletedGameConfiguration(_, _) =>
         None
     }.map(_._1)
     encoder.encode(moves, phrases)

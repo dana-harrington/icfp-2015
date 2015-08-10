@@ -1,6 +1,6 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.{PowerPhrase, EncodedMoves, MoveEncoder}
+import com.razorfish.icfp_2015.{EncodedMove, PowerPhrase, EncodedMoves, MoveEncoder}
 import com.razorfish.icfp_2015.models._
 import scalaz.Scalaz.unfold
 
@@ -32,7 +32,7 @@ trait SteppedStrategy[State] extends Strategy {
 trait SteppedEncodedStrategy[State] extends Strategy {
   def initialState: State
 
-  def step(gc: ActiveGameConfiguration, state: State): (Char, State)
+  def step(gc: ActiveGameConfiguration, state: State): (EncodedMove, State)
 
   def apply(board: Board, source: Source): EncodedMoves = {
     val initialConfiguration = GameConfiguration(board, source)

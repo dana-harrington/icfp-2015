@@ -1,6 +1,6 @@
 package com.razorfish.icfp_2015.strategies
 
-import com.razorfish.icfp_2015.{PowerPhrase, MoveEncoder, EncodedMoves}
+import com.razorfish.icfp_2015.{EncodedMove, PowerPhrase, MoveEncoder, EncodedMoves}
 import com.razorfish.icfp_2015.models._
 
 import scala.util.Random
@@ -10,11 +10,11 @@ import scala.util.Random
  */
 
 
-class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrategy[Seq[Char]] {
+class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrategy[Seq[EncodedMove]] {
 
-  def initialState = Seq.empty[Char]
+  def initialState = Seq.empty[EncodedMove]
 
-  val decodeMove: Map[Char, GameMove] = {
+  val decodeMove: Map[EncodedMove, GameMove] = {
     MoveEncoder.moveEncodings.flatMap {
       case (move, encodings) =>
         encodings.map(_ -> move)
@@ -32,7 +32,7 @@ class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrate
     }.toMap
   }
 
-  override def step(gc: ActiveGameConfiguration, state: Seq[Char]): (Char, Seq[Char]) = {
+  override def step(gc: ActiveGameConfiguration, state: Seq[EncodedMove]): (EncodedMove, Seq[EncodedMove]) = {
     state match {
       case move +: moves =>
         (move, moves)
@@ -43,7 +43,7 @@ class CurserStrategy(val phrases: Set[PowerPhrase]) extends SteppedEncodedStrate
   }
 
   // Use phrase of power if we can, otherwise go SW or SE
-  def solveForUnit(gc: ActiveGameConfiguration): Seq[Char] = {
+  def solveForUnit(gc: ActiveGameConfiguration): Seq[EncodedMove] = {
     val phrasePaths = phrases.map { phrase =>
       (phrase, phrase.map(MoveEncoder.decodeMove))
     }

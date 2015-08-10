@@ -4,7 +4,7 @@ import com.razorfish.icfp_2015.models._
 
 import MoveEncoder._
 
-case class EncodedMoves(moves: Seq[Char], powerWordScore: Score)
+case class EncodedMoves(moves: Seq[EncodedMove], powerWordScore: Score)
 
 sealed trait MatchState
 
@@ -23,7 +23,7 @@ object InLineEncoder extends MoveEncoder {
 
   def encode(moves: Seq[GameMove], powerWords: Set[PowerWord]): EncodedMoves = {
     val powerPhrases = powerWords.toSeq.map(_.toVector)
-    val result = moves.zipWithIndex.foldLeft[(Vector[Char], NodeState)]((Vector(), NodeState(0,powerPhrases))) { case (acc, (move, i)) =>
+    val result = moves.zipWithIndex.foldLeft[(Vector[EncodedMove], NodeState)]((Vector(), NodeState(0,powerPhrases))) { case (acc, (move, i)) =>
       val moveVector = movesCode(move)
       val encoded = acc._1 :+ movesCode(move).head
       val matches = partialMatches(moveVector, acc._2.index, acc._2.powerWords)
@@ -65,7 +65,7 @@ object InLineEncoder extends MoveEncoder {
   }
 
 
-  def partialMatches(moveVect: Vector[Char], index: Int, powerPhrases: Seq[PowerMove]): Seq[PowerMove] = {
+  def partialMatches(moveVect: Vector[EncodedMove], index: Int, powerPhrases: Seq[PowerMove]): Seq[PowerMove] = {
     val longPowerWords = powerPhrases.filter(_.length > index).filter { word =>
       moveVect contains word(index).toLower
     }
@@ -95,9 +95,9 @@ object MoveEncoder {
   val phrasesOfPower = Set("ei!", "r'lyeh", "ia! ia!", "yuggoth")
 
   type PowerWord = String
-  type PowerMove = Vector[Char]
+  type PowerMove = Vector[EncodedMove]
 
-  lazy val movesCode: Map[GameMove, Vector[Char]] = Map(
+  lazy val movesCode: Map[GameMove, Vector[EncodedMove]] = Map(
     W -> "p'!.03".toVector,
     E -> "bcefy2".toVector,
     SW -> "aghij4".toVector,
@@ -106,7 +106,7 @@ object MoveEncoder {
     CCW -> "kstuwx".toVector
   )
 
-  val moveEncodings: Map[GameMove, Set[Char]] = Map(
+  val moveEncodings: Map[GameMove, Set[EncodedMove]] = Map(
     W ->
       Set('p', '\'', '!', '.', '0', '3'),
     SW ->
@@ -121,14 +121,14 @@ object MoveEncoder {
       Set('k','s','t','u','w','x')
   )
 
-  val decodeMove: Map[Char, GameMove] = {
+  val decodeMove: Map[EncodedMove, GameMove] = {
     MoveEncoder.moveEncodings.flatMap {
       case (move, encodings) =>
         encodings.map(_.toLower -> move) ++ encodings.map(_.toUpper -> move)
     }
   }
 
-  def decodeMoves(moves: Seq[Char]): Seq[GameMove] = {
+  def decodeMoves(moves: Seq[EncodedMove]): Seq[GameMove] = {
     moves.flatMap { em =>
       decodeMove.get(em)
     }

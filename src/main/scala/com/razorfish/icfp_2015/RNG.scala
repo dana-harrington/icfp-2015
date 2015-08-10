@@ -8,7 +8,7 @@ class RNGProvider(modulus: Long, multiplier: Long, increment: Long, seed: Long) 
 
   def hasNext: Boolean = true
 
-  def next: Int = {
+  def next(): Int = {
     val result = currentSeed >> 16 & 0x7fff
     currentSeed = (multiplier * currentSeed + increment) % modulus
     result.toInt

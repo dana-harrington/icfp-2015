@@ -6,7 +6,6 @@ import com.razorfish.icfp_2015.models._
 import scala.annotation.tailrec
 
 class POPBranchStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) extends Strategy {
-  def initialState = ()
 
   // "Ei!" => E, SW, W
   // "Ia! Ia! " => SW, SW, W, SE, SW, SW, W
@@ -32,7 +31,9 @@ class POPBranchStrategy(val phrases: Set[PowerPhrase], encoder: MoveEncoder) ext
     var phrase = _phrase
     var phraseIndex = _phraseIndex
 
-    if (gc.activeUnit.moveHistory.isEmpty) allowedGameMovePhrases = gameMovePhrases.filterNot(gc.activeUnit.unit.containsCycle(_))
+    /// all moves that will not create cycle
+    if (gc.activeUnit.moveHistory.isEmpty) allowedGameMovePhrases = gameMovePhrases.filterNot(gc.activeUnit.unit.containsCycle)
+    /// If we don't have a current partially completed phrase pick a new phrase if possible
     if (phraseIndex == 0) {
       //select best
       val phrases = allowedGameMovePhrases

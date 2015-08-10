@@ -121,7 +121,7 @@ case class ActiveGameConfiguration( board: Board,
    */
   def freeze(): GameConfiguration = {
     val freezeState = freezeResult
-    if (!source.isEmpty) {
+    if (source.nonEmpty) {
 
       val newActiveUnit = source.head.center(freezeState.board)
       newActiveUnit.fold[GameConfiguration] {

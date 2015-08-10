@@ -23,3 +23,5 @@ retrieveManaged := true
 name := "play_icfp2015"
 
 enablePlugins(JavaAppPackaging)
+
+classDiagramSettings
